@@ -1,3 +1,102 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 html {
-  background-color: red;
+  background: linear-gradient(60deg, rgb(44, 44, 255), rgb(44, 157, 255));
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  width: calc(100vw - 30px);
+  height: calc(100vh - 30px);
+  background-color: rgb(240, 240, 240);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+#messages {
+  background-color: rgb(200, 200, 200);
+  width: 100%;
+  height: calc(100% - 40px);
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+#inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+}
+
+#messageInput {
+  width: calc(100% - 90px);
+  padding: 5px;
+  padding-left: 10px;
+  height: 30px;
+  border: 0;
+  outline: 0;
+  font-size: 25px;
+}
+
+#btn-send {
+  border: 0;
+  border-left: 1px solid black;
+  outline: 0;
+  width: 70px;
+  height: 40px;
+  background-color: white;
+  color: black;
+  font-size: 25px;
+}
+
+#btn-send:hover {
+  background-color: rgb(233, 233, 233);
+}
+
+.ownMessage {
+  background-color: white;
+  width: fit-content;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 15px;
+  border-bottom-right-radius: 0;
+  display: flex;
+  align-self: flex-end;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.ownMessage a {
+  align-self: flex-end;
+  color: grey;
+}
+
+.otherMessage {
+  background-color: white;
+  width: fit-content;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 15px;
+  border-bottom-left-radius: 0;
+  display: flex;
+  align-self: flex-start;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.otherMessage a {
+  align-self: flex-start;
+  color: grey;
 }

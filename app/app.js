@@ -1,12 +1,17 @@
-const socket = io("ws://localhost:5500");
+const socket = io("ws://localhost:8080");
 
-socket.on("message", text => {
-  el = document.createElement("li");
-  el.innerHTML = text;
-  document.querySelector("ul").appendChild(el);
+const user = prompt("Username")
+
+textInput = document.getElementById("messageInput");
+messages = document.getElementById("messages");
+
+socket.on("message", message => {
+  el = document.createElement("div");
+  el.classList = message.user == user?"ownMessage":"otherMessage";
+  el.innerHTML = "<p>" + message.text + "</p><a>" + message.user +"</a>";
+  messages.appendChild(el);
 });
 
-document.querySelector("button").onclick = () => {
-  text = document.querySelector("input").value;
-  socket.emit("message", text);
-}
+document.getElementById("btn-send").addEventListener("click",  () => {
+  socket.emit("message", {text: textInput.value, user: user});
+});
