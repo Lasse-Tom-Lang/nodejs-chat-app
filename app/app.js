@@ -15,5 +15,7 @@ socket.on("message", message => {
 });
 
 document.getElementById("btn-send").addEventListener("click",  () => {
-  socket.emit("message", {text: textInput.value, user: user});
+  text = textInput.value.replace(/</g, "&lt;");
+  text = text.replace(/>/g, "&gt;");
+  socket.emit("message", {text: text, user: user});
 });
