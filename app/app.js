@@ -1,6 +1,8 @@
 const socket = io("ws://localhost:8080");
 
-const user = prompt("Username")
+const user = "Test user"
+
+// var passhash = CryptoJS.MD5(password).toString();
 
 textInput = document.getElementById("messageInput");
 messages = document.getElementById("messages");
