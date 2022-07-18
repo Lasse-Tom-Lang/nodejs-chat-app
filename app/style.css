@@ -39,13 +39,17 @@ main {
 }
 
 #messageInput {
-  width: calc(100% - 90px);
+  width: calc(100% - 86px);
   padding: 5px;
   padding-left: 10px;
   height: 30px;
   border: 0;
   outline: 0;
   font-size: 25px;
+  resize: none;
+  border-bottom-left-radius: 20px;
+  align-self: flex-end;
+  transition: 0.4s all ease-in-out;
 }
 
 #btn-send {
