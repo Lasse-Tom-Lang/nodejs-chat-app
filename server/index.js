@@ -6,11 +6,14 @@ const url = require("url");
 const http = require('http');
 const express = require('express');
 const app = express();
+const cookieParser = require("cookie-parser");
+const sessions = require('express-session');
+const oneDay = 1000 * 60 * 60 * 24;
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 server.listen(8080);
 
-//Loding user data
+// Loding user data
 const userPassword = JSON.parse(fs.readFileSync('data/users.json')).users;
 
 /**
@@ -39,10 +42,38 @@ function testLogin(user, password) {
   }
 }
 
+// Setup sessions
+
+app.use(sessions({
+  secret: ".f2.97rrh34?r318b24!82rb",
+  saveUninitialized: true,
+  cookie: { maxAge: oneDay },
+  resave: false
+}));
+
+app.use(cookieParser());
+
+app.get('/setSession', function(req, res) {
+  urldata = url.parse(req.url, true).query;
+  req.session.user = { name:urldata.username};
+  res.send('Session set');
+  res.end();
+});
+
+app.get('/getSession', function(req, res) {
+  res.send(req.session.user);
+});
+
 // Setup pages
 app.get('/', function (req, res) {
-  res.write(fs.readFileSync("../app/index.html"));
-  res.end();
+  if (req.session.user) {
+    res.write(fs.readFileSync("../app/index.html"));
+    res.end();
+  }
+  else {
+    res.write(fs.readFileSync("../app/login.html"));
+    res.end();
+  }
 });
 
 app.get('/style.css', function (req, res) {
@@ -56,12 +87,12 @@ app.get('/app.js', function (req, res) {
 });
 
 app.get('/userauthentification', function (req, res) {
-  urldata = url.parse(req.url,true).query;
+  urldata = url.parse(req.url, true).query;
   res.write(testLogin(urldata.user, urldata.password));
   res.end();
 });
 
-//Setup socket.io
+// Setup socket.io
 io.on("connection", (socket) => {
   socket.on("message", (message) => {
     io.emit("message", message);

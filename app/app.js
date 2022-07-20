@@ -1,12 +1,11 @@
 const socket = io("ws://localhost:8080");
 
-const user = prompt("Username");
-
-fetch("http://localhost:8080/userauthentification?user=test&password=Password")
-  .then((response) => response.text())
-  .then((text) => console.log(text));
-
-// var passhash = CryptoJS.MD5(password).toString();
+user = "";
+fetch("http://localhost:8080/getSession")
+  .then(response => response.json())
+  .then(data => {
+    user = data.name;
+  });
 
 textInput = document.getElementById("messageInput");
 messages = document.getElementById("messages");
