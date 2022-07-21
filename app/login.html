@@ -26,13 +26,12 @@
       </div>
     </main>
     <script>
-      // var passhash = CryptoJS.MD5(password).toString();
       username = document.getElementById("usernameInput");
       password = document.getElementById("passwordInput");
       error = document.getElementById("error");
 
       document.getElementById("btn-login").addEventListener("click", () => {
-        fetch("http://localhost:8080/userauthentification?user=" + username.value + "&password=" + password.value)
+        fetch("http://localhost:8080/userauthentification?user=" + username.value + "&password=" + CryptoJS.MD5(password.value).toString())
           .then((response) => response.text())
           .then((text) => {
             if (text != "Login correct") {
