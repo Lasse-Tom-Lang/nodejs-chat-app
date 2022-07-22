@@ -2,6 +2,32 @@ const socket = io("ws://localhost:8080");
 
 connectedUsers = [];
 
+chat = "";
+
+chatList = document.getElementById("chatList");
+messageDiv = document.querySelector("main>div:nth-of-type(2)");
+
+function setChat(chatID) {
+  chat = chatID;
+  if (window.screen.availWidth <= 600 && chat) {
+    chatList.style.display = "none";
+    messageDiv.style.display = "block";
+  }
+}
+
+function back() {
+  chat = "";
+  chatList.style.display = "flex";
+  messageDiv.style.display = "none";
+}
+
+window.onresize = function() {
+  if (window.screen.availWidth > 600) {
+    chatList.style.display = "flex";
+    messageDiv.style.display = "block";
+  }
+}
+
 user = "";
 fetch("http://localhost:8080/getSession")
   .then(response => response.json())
@@ -10,8 +36,8 @@ fetch("http://localhost:8080/getSession")
     socket.emit("connected", data.name);
   });
 
-socket.on("connected", (newUser) => {
-  connectedUsers.push(newUser);
+socket.on("connected", (users) => {
+  connectedUsers = users;
 });
 
 socket.on("disconnected", (user) => {

@@ -13,11 +13,24 @@
   </head>
   <body>
     <main>
-      <div id="messages">
+      <div id="chatList">
+        <button class="chat" onclick="setChat('User');">
+          <img src="profilePictures?user=User">
+          <a>
+            User
+          </a>
+        </button>
       </div>
-      <div id="inputs">
-        <textarea id="messageInput" placeholder="Enter message"></textarea>
-        <button id="btn-send">Send</button>
+      <div>
+        <button onclick="back();" id="chatBack">
+          Back
+        </button>
+        <div id="messages">
+        </div>
+        <div id="inputs">
+          <textarea id="messageInput" placeholder="Enter message"></textarea>
+          <button id="btn-send">Send</button>
+        </div>
       </div>
     </main>
   </body>

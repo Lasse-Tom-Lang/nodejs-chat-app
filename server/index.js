@@ -92,6 +92,11 @@ app.get('/userauthentification', function (req, res) {
   res.end();
 });
 
+app.get('/profilePictures', function (req, res) {
+  urldata = url.parse(req.url, true).query;
+  res.sendFile("data/userImages/" + urldata.user + ".png", { root : __dirname});
+});
+
 // Setup socket.io
 
 const users = {};
@@ -99,8 +104,7 @@ const users = {};
 io.on("connection", (socket) => {
   socket.on("connected", (user) => {
     users[user] = socket.id;
-    io.emit("connected", user);
-    console.log(users)
+    io.emit("connected", Object.keys(users));
   });
 
   socket.on("disconnect", () => {

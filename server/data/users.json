@@ -1,6 +1,6 @@
 {
   "users": [
-    {"name": "test", "password": "dc647eb65e6711e155375218212b3964"},
-    {"name": "user", "password": "dc647eb65e6711e155375218212b3964"}
+    {"name": "Test", "password": "dc647eb65e6711e155375218212b3964"},
+    {"name": "User", "password": "dc647eb65e6711e155375218212b3964"}
   ]
 }
