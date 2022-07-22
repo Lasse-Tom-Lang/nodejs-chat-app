@@ -93,7 +93,22 @@ app.get('/userauthentification', function (req, res) {
 });
 
 // Setup socket.io
+
+const users = {};
+
 io.on("connection", (socket) => {
+  socket.on("connected", (user) => {
+    users[user] = socket.id;
+    io.emit("connected", user);
+    console.log(users)
+  });
+
+  socket.on("disconnect", () => {
+    userName = Object.keys(users).find(key => users[key] === socket.id);
+    delete users[userName];
+    io.emit("disconnected", (userName));
+  })
+
   socket.on("message", (message) => {
     io.emit("message", message);
   });

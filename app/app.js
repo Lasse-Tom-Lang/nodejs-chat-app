@@ -1,11 +1,22 @@
 const socket = io("ws://localhost:8080");
 
+connectedUsers = [];
+
 user = "";
 fetch("http://localhost:8080/getSession")
   .then(response => response.json())
   .then(data => {
     user = data.name;
+    socket.emit("connected", data.name);
   });
+
+socket.on("connected", (newUser) => {
+  connectedUsers.push(newUser);
+});
+
+socket.on("disconnected", (user) => {
+  connectedUsers.pop(user);
+});
 
 textInput = document.getElementById("messageInput");
 messages = document.getElementById("messages");
