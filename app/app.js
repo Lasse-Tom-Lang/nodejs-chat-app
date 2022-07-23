@@ -30,10 +30,10 @@ window.onresize = function() {
 
 user = "";
 fetch("http://localhost:8080/getSession")
-  .then(response => response.json())
+  .then(response => response.text())
   .then(data => {
-    user = data.name;
-    socket.emit("connected", data.name);
+    user = data;
+    socket.emit("connected", data);
   });
 
 socket.on("connected", (users) => {
@@ -48,10 +48,12 @@ textInput = document.getElementById("messageInput");
 messages = document.getElementById("messages");
 
 socket.on("message", message => {
-  el = document.createElement("div");
-  el.classList = message.user == user?"ownMessage":"otherMessage";
-  el.innerHTML = "<p>" + message.text + "</p><a>" + message.user +"</a>";
-  messages.appendChild(el);
+  if (message.chat == chat) {
+    el = document.createElement("div");
+    el.classList = message.user == user?"ownMessage":"otherMessage";
+    el.innerHTML = "<p>" + message.text + "</p><a>" + message.user +"</a>";
+    messages.appendChild(el);
+  }
 });
 
 textInput.addEventListener("input", () => {
@@ -72,7 +74,7 @@ document.getElementById("btn-send").addEventListener("click",  () => {
     text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>")
-    socket.emit("message", {text: text, user: user});
+    socket.emit("message", {text: text, user: user, chat: chat});
     textInput.value = "";
     textInput.style.height = "30px";
     textInput.style.borderTopLeftRadius = "0px";

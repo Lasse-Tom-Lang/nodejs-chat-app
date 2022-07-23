@@ -59,15 +59,12 @@ main>div:nth-of-type(2) {
   #chatBack {
     display: inline;
     padding: 4px;
-    position: absolute;
-    top: 0;
-    left: 0;
+    height: 100%;
     background-color: white;
-    border-bottom-right-radius: 10px;
     border: 0;
+    border-right: 1px solid black;
     outline: 0;
     cursor: pointer;
-    box-shadow: 1px 1px 3px grey;
     font-size: 18px;
   }
 }
@@ -154,11 +151,24 @@ main>div:nth-of-type(2) {
 #messages {
   background-color: rgb(200, 200, 200);
   width: 100%;
-  height: calc(100% - 40px);
+  height: calc(100% - 90px);
+  padding-top: 50px;
   display: flex;
   justify-content: flex-start;
+  align-items: center;
   flex-direction: column;
   overflow-y: scroll;
+}
+
+#chatInfos {
+  position: absolute;
+  height: 45px;
+  top: 5px;
+  left: 5px;
+  width: calc(100% - 10px);
+  background-color: white;
+  border-radius: 15px;
+  overflow: hidden;
 }
 
 #inputs {

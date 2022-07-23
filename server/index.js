@@ -12,7 +12,7 @@ var io = require('socket.io')(server);
 server.listen(8080);
 
 // Loding user data
-const userPassword = JSON.parse(fs.readFileSync('data/users.json')).users;
+const usersInfo = JSON.parse(fs.readFileSync('data/users.json')).users;
 
 /**
  * @param {string} user Username to check
@@ -22,7 +22,7 @@ const userPassword = JSON.parse(fs.readFileSync('data/users.json')).users;
 function testLogin(user, password) {
   if (user && password) {
     correct = false;
-    userPassword.forEach(element => {
+    usersInfo.forEach(element => {
       if (element.name == user && element.password == password) {
         correct = true;
         return;
@@ -51,12 +51,12 @@ app.use(sessions({
 
 app.use(cookieParser());
 
-app.get('/getSession', function(req, res) {
+app.get('/getSession', (req, res) => {
   res.send(req.session.user);
 });
 
 // Setup pages
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   if (req.session.user) {
     res.write(fs.readFileSync("../app/index.html"));
     res.end();
@@ -67,27 +67,42 @@ app.get('/', function (req, res) {
   }
 });
 
-app.get('/style.css', function (req, res) {
+app.get('/style.css', (req, res) => {
   res.write(fs.readFileSync("../app/style.css"));
   res.end();
 });
 
-app.get('/app.js', function (req, res) {
+app.get('/app.js', (req, res) => {
   res.write(fs.readFileSync("../app/app.js"));
   res.end();
 });
 
-app.get('/userauthentification', function (req, res) {
+app.get('/userauthentification', (req, res) => {
   answer = testLogin(req.query.user, req.query.password);
   if (answer == "Login correct") {
-    req.session.user = { name:req.query.user};
+    req.session.user = req.query.user;
   }
   res.write(answer);
   res.end();
 });
 
-app.get('/profilePictures', function (req, res) {
+app.get('/profilePictures', (req, res) => {
   res.sendFile("data/userImages/" + req.query.user + ".png", { root : __dirname});
+});
+
+app.get("/getUserInfos", (req, res) => {
+  if (req.session.user) {
+    for (i=0; i < usersInfo.length; i++) {
+      if (usersInfo[i].name == req.session.user) {
+        res.write(JSON.stringify(usersInfo[i]));
+        res.end();
+      }
+    }
+  }
+  else {
+    res.write("Not logged in");
+    res.end();
+  }
 });
 
 // Setup socket.io

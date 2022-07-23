@@ -1,6 +1,64 @@
 {
   "users": [
-    {"name": "Test", "password": "dc647eb65e6711e155375218212b3964"},
-    {"name": "User", "password": "dc647eb65e6711e155375218212b3964"}
+    {
+      "name": "Test",
+      "password": "dc647eb65e6711e155375218212b3964",
+      "id": 40274829564,
+      "chats": [
+        {
+          "id": 58364391558,
+          "user": {
+            "id": 3957364017,
+            "name": "User"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": 29756104638,
+          "name": "Programmers",
+          "users": [
+            {
+              "id": 40274829564,
+              "name": "Test"
+            },
+            {
+              "id": 3957364017,
+              "name": "User"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "password": "dc647eb65e6711e155375218212b3964",
+      "id": 3957364017,
+      "chats": [
+        {
+          "id": 58364391558,
+          "user": {
+            "id": 40274829564,
+            "name": "Test"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "id": 29756104638,
+          "name": "Programmers",
+          "users": [
+            {
+              "id": 40274829564,
+              "name": "Test"
+            },
+            {
+              "id": 3957364017,
+              "name": "User"
+            }
+          ]
+        }
+      ]
+    }
   ]
 }
