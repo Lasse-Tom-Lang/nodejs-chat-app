@@ -1,8 +1,6 @@
-var crypto = require('crypto'); // console.log(crypto.createHash('md5').update("test").digest('hex'));
 const fs = require('fs');
 
 // Setup server
-const url = require("url");
 const http = require('http');
 const express = require('express');
 const app = express();
@@ -53,13 +51,6 @@ app.use(sessions({
 
 app.use(cookieParser());
 
-app.get('/setSession', function(req, res) {
-  urldata = url.parse(req.url, true).query;
-  req.session.user = { name:urldata.username};
-  res.send('Session set');
-  res.end();
-});
-
 app.get('/getSession', function(req, res) {
   res.send(req.session.user);
 });
@@ -87,14 +78,16 @@ app.get('/app.js', function (req, res) {
 });
 
 app.get('/userauthentification', function (req, res) {
-  urldata = url.parse(req.url, true).query;
-  res.write(testLogin(urldata.user, urldata.password));
+  answer = testLogin(req.query.user, req.query.password);
+  if (answer == "Login correct") {
+    req.session.user = { name:req.query.user};
+  }
+  res.write(answer);
   res.end();
 });
 
 app.get('/profilePictures', function (req, res) {
-  urldata = url.parse(req.url, true).query;
-  res.sendFile("data/userImages/" + urldata.user + ".png", { root : __dirname});
+  res.sendFile("data/userImages/" + req.query.user + ".png", { root : __dirname});
 });
 
 // Setup socket.io

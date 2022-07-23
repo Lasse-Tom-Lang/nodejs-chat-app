@@ -38,8 +38,7 @@
               error.innerHTML = text;
             }
             else {
-              fetch("http://localhost:8080/setSession?username=" + username.value);
-              setTimeout(() => {location.reload()}, 1500);
+              location.reload();
             }
           });
       });
