@@ -13,6 +13,7 @@ server.listen(8080);
 
 // Loding user data
 const usersInfo = JSON.parse(fs.readFileSync('data/users.json')).users;
+const chatInfo = JSON.parse(fs.readFileSync('data/chats.json'))
 
 /**
  * @param {string} user Username to check
@@ -50,10 +51,6 @@ app.use(sessions({
 }));
 
 app.use(cookieParser());
-
-app.get('/getSession', (req, res) => {
-  res.send(req.session.user);
-});
 
 // Setup pages
 app.get('/', (req, res) => {
@@ -94,9 +91,38 @@ app.get("/getUserInfos", (req, res) => {
   if (req.session.user) {
     for (i=0; i < usersInfo.length; i++) {
       if (usersInfo[i].name == req.session.user) {
-        res.write(JSON.stringify(usersInfo[i]));
+        res.json(usersInfo[i]);
         res.end();
       }
+    }
+  }
+  else {
+    res.write("Not logged in");
+    res.end();
+  }
+});
+
+app.get("/getChat", (req, res) => {
+  if (req.session.user) {
+    if (req.query.chatID && req.query.chatType) {
+      if (req.query.chatType == "chat") {
+        chatInfo.chats.forEach(element => {
+          if (element.id == req.query.chatID) {
+            element.users.forEach(elementUser => {
+              if (elementUser.name == req.session.user) {
+                res.json(element);
+                res.end();
+                return;
+              }
+            });
+            return;
+          }
+        });
+      }
+    }
+    else {
+      res.write("No chat selected");
+      res.end();
     }
   }
   else {

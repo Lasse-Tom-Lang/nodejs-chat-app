@@ -57,6 +57,7 @@ main>div:nth-of-type(2) {
     width: 100%;
   }
   #chatBack {
+    position: absolute;
     display: inline;
     padding: 4px;
     height: 100%;
@@ -66,6 +67,8 @@ main>div:nth-of-type(2) {
     outline: 0;
     cursor: pointer;
     font-size: 18px;
+    top: 0;
+    left: 0;
   }
 }
 
@@ -169,6 +172,20 @@ main>div:nth-of-type(2) {
   background-color: white;
   border-radius: 15px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#chatInfos img {
+  width: 40px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+#chatInfos p {
+  font-size: 35px;
 }
 
 #inputs {
