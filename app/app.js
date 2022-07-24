@@ -29,6 +29,7 @@ function setChat(chatID, chatType) {
           chatName.innerHTML = chatInfo.users[0].name;
         }
       }
+      messages.innerHTML = "";
       chatInfo.messages.forEach(element => {
         el = document.createElement("div");
         el.classList = element.user.id == userInfo.id?"ownMessage":"otherMessage";
@@ -106,11 +107,15 @@ textInput.addEventListener("input", () => {
 });
 
 document.getElementById("btn-send").addEventListener("click",  () => {
-  if (textInput.value.trim().length != 0) {
+  if (textInput.value.trim().length != 0 && chatInfo) {
     text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
-    socket.emit("message", {text: text, user: userInfo.name, chat: chat});
+    socket.emit("message", {text: text, user: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => {return a.name;})});
+    el = document.createElement("div");
+    el.classList = "ownMessage";
+    el.innerHTML = "<p>" + text + "</p><a>" + userInfo.name +"</a>";
+    messages.appendChild(el);
     textInput.value = "";
     textInput.style.height = "30px";
     textInput.style.borderTopLeftRadius = "0px";

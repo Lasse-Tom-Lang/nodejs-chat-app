@@ -148,6 +148,10 @@ io.on("connection", (socket) => {
   })
 
   socket.on("message", (message) => {
-    io.emit("message", message);
+    message.sendTo.forEach(element => {
+      if (users[element]) {
+        socket.broadcast.to(users[element]).emit("message", message);
+      }
+    });
   });
 });
