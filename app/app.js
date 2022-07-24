@@ -7,8 +7,9 @@ chatInfo = undefined;
 
 chatList = document.getElementById("chatList");
 messageDiv = document.querySelector("main>div:nth-of-type(2)");
-chatImage = document.querySelector("chatInfo img");
-chatName = document.querySelector("chatInfo p");
+chatImage = document.querySelector("#chatInfos img");
+chatName = document.querySelector("#chatInfos p");
+messages = document.getElementById("messages");
 
 function setChat(chatID, chatType) {
   chat = chatID;
@@ -16,7 +17,24 @@ function setChat(chatID, chatType) {
     .then(response => response.json())
     .then(data => {
       chatInfo = data;
-      console.log(chatInfo);
+      if (chatType == "chat") {
+        if (chatInfo.users[0].id == userInfo.id) {
+          chatImage.src = "profilePictures?user=" + chatInfo.users[1].id;
+          chatImage.style.display = "inline";
+          chatName.innerHTML = chatInfo.users[1].name;
+        }
+        else if (chatInfo.users[1].id == userInfo.id) {
+          chatImage.src = "profilePictures?user=" + chatInfo.users[0].id;
+          chatImage.style.display = "inline";
+          chatName.innerHTML = chatInfo.users[0].name;
+        }
+      }
+      chatInfo.messages.forEach(element => {
+        el = document.createElement("div");
+        el.classList = element.user.id == userInfo.id?"ownMessage":"otherMessage";
+        el.innerHTML = "<p>" + element.text + "</p><a>" + element.user.name +"</a>";
+        messages.appendChild(el);
+      });
     });
   if (window.screen.availWidth <= 600 && chat) {
     chatList.style.display = "none";
@@ -64,7 +82,6 @@ socket.on("disconnected", (user) => {
 });
 
 textInput = document.getElementById("messageInput");
-messages = document.getElementById("messages");
 
 socket.on("message", message => {
   if (message.chat == chat) {
