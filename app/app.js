@@ -29,6 +29,11 @@ function setChat(chatID, chatType) {
           chatName.innerHTML = chatInfo.users[0].name;
         }
       }
+      else if (chatType == "group") {
+        chatImage.src = "profilePictures?user=" + chatInfo.id;
+        chatImage.style.display = "inline";
+        chatName.innerHTML = chatInfo.name;
+      }
       messages.innerHTML = "";
       chatInfo.messages.forEach(element => {
         el = document.createElement("div");
@@ -37,7 +42,7 @@ function setChat(chatID, chatType) {
         messages.appendChild(el);
       });
     });
-  if (window.screen.availWidth <= 600 && chat) {
+  if (window.screen.availWidth <= 800 && chat) {
     chatList.style.display = "none";
     messageDiv.style.display = "block";
   }
@@ -50,7 +55,7 @@ function back() {
 }
 
 window.onresize = function() {
-  if (window.screen.availWidth > 600) {
+  if (window.screen.availWidth > 800) {
     chatList.style.display = "flex";
     messageDiv.style.display = "block";
   }
@@ -68,6 +73,16 @@ fetch("http://localhost:8080/getUserInfos")
           <img src="profilePictures?user=` + element.user.id + `">
           <a>
             ` + element.user.name + `
+          </a>
+        </button>
+      `;
+    });
+    userInfo.groups.forEach(element => {
+      chatList.innerHTML += `
+        <button class="chat" onclick="setChat(` + element.id + `, 'group');">
+          <img src="profilePictures?user=` + element.id + `">
+          <a>
+            ` + element.name + `
           </a>
         </button>
       `;

@@ -26,14 +26,14 @@ main {
 }
 
 main>div:nth-of-type(2) {
-  width: calc(100% - 200px);
+  width: calc(100% - 300px);
   height: 100%;
   position: relative;
   display: block;
 }
 
 #chatList {
-  width: 200px;
+  width: 300px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -46,7 +46,7 @@ main>div:nth-of-type(2) {
   display: none;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
   main {
     display: block;
   }

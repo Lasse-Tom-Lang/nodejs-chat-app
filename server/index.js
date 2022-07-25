@@ -12,8 +12,8 @@ var io = require('socket.io')(server);
 server.listen(8080);
 
 // Loding user data
-const usersInfo = JSON.parse(fs.readFileSync('data/users.json')).users;
-const chatInfo = JSON.parse(fs.readFileSync('data/chats.json'))
+usersInfo = JSON.parse(fs.readFileSync('data/users.json')).users;
+chatInfo = JSON.parse(fs.readFileSync('data/chats.json'))
 
 /**
  * @param {string} user Username to check
@@ -118,6 +118,15 @@ app.get("/getChat", (req, res) => {
             return;
           }
         });
+      }
+      if (req.query.chatType == "group") {
+        chatIndex = chatInfo.groups.map((a) => {return a.id;}).indexOf(parseInt(req.query.chatID));
+        if (chatIndex != -1) {
+          if (chatInfo.groups[chatIndex].users.map((a) => {return a.name;}).includes(req.session.user)) {
+            res.json(chatInfo.groups[chatIndex]);
+            res.end();
+          }
+        }
       }
     }
     else {
