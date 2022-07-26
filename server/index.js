@@ -5,6 +5,7 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const cookieParser = require("cookie-parser");
+const fileUpload = require('express-fileupload');
 const sessions = require('express-session');
 const oneDay = 1000 * 60 * 60 * 24;
 var server = http.createServer(app);
@@ -53,6 +54,11 @@ app.use(sessions({
 app.use(cookieParser());
 
 // Setup pages
+
+app.use(
+  fileUpload()
+);
+
 app.get('/', (req, res) => {
   if (req.session.user) {
     res.write(fs.readFileSync("../app/index.html"));
@@ -138,6 +144,17 @@ app.get("/getChat", (req, res) => {
     res.write("Not logged in");
     res.end();
   }
+});
+
+app.post("/upload", (req, res) => {
+  file = req.files.myFile;
+  path = __dirname + "/data/Uploads/" + file.name;
+  file.mv(path, (err) => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    return res.send({ status: "success", path: path });
+  });
 });
 
 // Setup socket.io
