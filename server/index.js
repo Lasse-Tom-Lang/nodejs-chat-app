@@ -93,6 +93,10 @@ app.get('/profilePictures', (req, res) => {
   res.sendFile("data/userImages/" + req.query.user + ".png", { root : __dirname});
 });
 
+app.get('/messageImages', (req, res) => {
+  res.sendFile("data/Uploads/Images/" + req.query.messageID + "/" + req.query.imageName, { root : __dirname});
+});
+
 app.get("/getUserInfos", (req, res) => {
   if (req.session.user) {
     for (i=0; i < usersInfo.length; i++) {
@@ -146,10 +150,11 @@ app.get("/getChat", (req, res) => {
   }
 });
 
-app.post("/upload", (req, res) => {
+app.post("/uploadImage", (req, res) => {
   file = req.files.myFile;
-  path = __dirname + "/data/Uploads/" + file.name;
-  file.mv(path, (err) => {
+  path = __dirname + "/data/Uploads/Images" + req.body.id;
+  if (!fs.existsSync(path)) fs.mkdir(path, () => {});
+  file.mv(path + "/" + file.name, (err) => {
     if (err) {
       return res.status(500).send(err);
     }

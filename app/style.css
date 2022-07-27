@@ -237,7 +237,6 @@ main>div:nth-of-type(2) {
 
 .ownMessage {
   background-color: white;
-  width: fit-content;
   padding: 10px;
   margin: 10px;
   border-radius: 15px;
@@ -254,9 +253,16 @@ main>div:nth-of-type(2) {
   color: grey;
 }
 
+.ownMessage img {
+  width: 30%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 15px;
+  margin: 5px;
+}
+
 .otherMessage {
   background-color: white;
-  width: fit-content;
   padding: 10px;
   margin: 10px;
   border-radius: 15px;
@@ -271,4 +277,12 @@ main>div:nth-of-type(2) {
 .otherMessage a {
   align-self: flex-start;
   color: grey;
+}
+
+.otherMessage img {
+  width: 30%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 15px;
+  margin: 5px;
 }

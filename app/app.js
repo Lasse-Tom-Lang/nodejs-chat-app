@@ -38,7 +38,14 @@ function setChat(chatID, chatType) {
       chatInfo.messages.forEach(element => {
         el = document.createElement("div");
         el.classList = element.user.id == userInfo.id?"ownMessage":"otherMessage";
-        el.innerHTML = "<p>" + element.text + "</p><a>" + element.user.name +"</a>";
+        if (element.type == "image") {
+          el.innerHTML = "<div>"
+          console.log(el.firstChild);
+          element.images.forEach(image => {
+            el.firstChild.innerHTML += "<img src='/messageImages?messageID=" + element.messageID + "&imageName=" + image + "'>";
+          });
+        }
+        el.innerHTML += "<p>" + element.text + "</p><a>" + element.user.name +"</a>";
         messages.appendChild(el);
       });
     });
