@@ -31,14 +31,14 @@ function testLogin(user, password) {
       }
     });
     if (!correct) {
-      return "Login incorrect";
+      return {"status": 0, "errorMessage": "Login data incorrect"};
     }
     else {
-      return "Login correct";
+      return {"status": 1};
     }
   }
   else {
-    return "Missing values";
+    return {"status": 0, "errorMessage": "Data missing"};
   }
 }
 
@@ -82,19 +82,21 @@ app.get('/app.js', (req, res) => {
 
 app.get('/userauthentification', (req, res) => {
   answer = testLogin(req.query.user, req.query.password);
-  if (answer == "Login correct") {
+  if (answer.status == 1) {
     req.session.user = req.query.user;
   }
-  res.write(answer);
+  res.json(answer);
   res.end();
 });
 
 app.get('/profilePictures', (req, res) => {
-  res.sendFile("data/userImages/" + req.query.user + ".png", { root : __dirname});
+  if (fs.existsSync("data/userImages/" + req.query.user + ".png")) res.sendFile("data/userImages/" + req.query.user + ".png", { root : __dirname});
+  else res.sendFile("imageError.png", { root : __dirname});
 });
 
 app.get('/messageImages', (req, res) => {
-  res.sendFile("data/Uploads/Images/" + req.query.messageID + "/" + req.query.imageName, { root : __dirname});
+  if (fs.existsSync("data/Uploads/Images/" + req.query.messageID + "/" + req.query.imageName)) res.sendFile("data/Uploads/Images/" + req.query.messageID + "/" + req.query.imageName, { root : __dirname});
+  else res.sendFile("imageError.png", { root : __dirname});
 });
 
 app.get("/getUserInfos", (req, res) => {
@@ -107,7 +109,7 @@ app.get("/getUserInfos", (req, res) => {
     }
   }
   else {
-    res.write("Not logged in");
+    res.json({"status": 0 , "errorMessage": "Not logged in"});
     res.end();
   }
 });
@@ -140,12 +142,12 @@ app.get("/getChat", (req, res) => {
       }
     }
     else {
-      res.write("No chat selected");
+      res.json({"status": 0 , "errorMessage": "Data missing"});
       res.end();
     }
   }
   else {
-    res.write("Not logged in");
+    res.json({"status": 0 , "errorMessage": "Not logged in"});
     res.end();
   }
 });

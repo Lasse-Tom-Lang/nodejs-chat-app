@@ -13,7 +13,7 @@ messages = document.getElementById("messages");
 
 function setChat(chatID, chatType) {
   chat = chatID;
-  fetch("http://localhost:8080/getChat?chatID=" + chatID + "&chatType=" + chatType)
+  fetch("/getChat?chatID=" + chatID + "&chatType=" + chatType)
     .then(response => response.json())
     .then(data => {
       chatInfo = data;
@@ -69,7 +69,7 @@ window.onresize = function() {
 }
 
 userInfo = "";
-fetch("http://localhost:8080/getUserInfos")
+fetch("/getUserInfos")
   .then(response => response.json())
   .then(data => {
     userInfo = data;

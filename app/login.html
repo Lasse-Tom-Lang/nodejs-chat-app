@@ -31,11 +31,11 @@
       error = document.getElementById("error");
 
       document.getElementById("btn-login").addEventListener("click", () => {
-        fetch("http://localhost:8080/userauthentification?user=" + username.value + "&password=" + CryptoJS.MD5(password.value).toString())
-          .then((response) => response.text())
-          .then((text) => {
-            if (text != "Login correct") {
-              error.innerHTML = text;
+        fetch("/userauthentification?user=" + username.value + "&password=" + CryptoJS.MD5(password.value).toString())
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status != 1) {
+              error.innerHTML = data.errorMessage;
             }
             else {
               location.reload();
