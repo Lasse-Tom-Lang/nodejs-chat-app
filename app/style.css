@@ -231,10 +231,11 @@ main>div:nth-of-type(2) {
   justify-content: center;
   height: 40px;
   width: 100%;
+  position: relative;
 }
 
 #messageInput {
-  width: calc(100% - 86px);
+  width: calc(100% - 140px);
   padding: 5px;
   padding-left: 10px;
   height: 30px;
@@ -354,4 +355,54 @@ main>div:nth-of-type(2) {
 #uploadErrorMessage {
   color: rgb(255, 67, 46);
   text-align: center;
+}
+
+#chatMessageType {
+  border: 0;
+  border-right: 1px solid black;
+  outline: 0;
+  width: 70px;
+  height: 40px;
+  background-color: white;
+  color: black;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+#chatMessageType:hover {
+  background-color: rgb(233, 233, 233);
+}
+
+#messageTypeChoose {
+  position: absolute;
+  width: 60px;
+  left: 5px;
+  bottom: 50px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#messageTypeChoose button {
+  font-size: 18px;
+  outline: 0;
+  border: 0;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  background-color: white;
+  width: 100%;
+  border-bottom: 1px solid black;
+  cursor: pointer;
+}
+
+#messageTypeChoose button:hover{
+  background-color: rgb(233, 233, 233);
+}
+
+#messageTypeChoose button:last-of-type {
+  border-bottom: 0;
 }

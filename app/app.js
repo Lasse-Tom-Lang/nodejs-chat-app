@@ -12,6 +12,16 @@ messageDiv = document.querySelector("main>div:nth-of-type(2)");
 chatImage = document.querySelector("#chatInfos img");
 chatName = document.querySelector("#chatInfos p");
 messages = document.getElementById("messages");
+messageTypeDiv = document.getElementById("messageTypeChoose");
+
+function toggleMessageType() {
+  if (messageTypeDiv.style.display == "flex") {
+    messageTypeDiv.style.display = "none";
+  }
+  else {
+    messageTypeDiv.style.display = "flex";
+  }
+}
 
 function setChat(chatID, chatType) {
   chat = chatID;

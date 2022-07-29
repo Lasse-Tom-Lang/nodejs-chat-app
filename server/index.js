@@ -164,13 +164,13 @@ app.get("/getChat", (req, res) => {
 
 app.post("/uploadImage", (req, res) => {
   file = req.files.myFile;
-  path = __dirname + "/data/Uploads/Images" + req.body.id;
+  path = __dirname + "/data/Uploads/Images/" + req.body.id;
   if (!fs.existsSync(path)) fs.mkdir(path, () => {});
   file.mv(path + "/" + file.name, (err) => {
     if (err) {
-      return res.status(500).send(err);
+      return res.send({"status": 0, "errorMessage": "Something went wrong"});
     }
-    return res.send({ status: "success", path: path });
+    return res.send({"status": 1});
   });
 });
 
