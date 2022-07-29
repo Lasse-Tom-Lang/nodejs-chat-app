@@ -110,6 +110,7 @@ main>div:nth-of-type(2) {
   justify-content: flex-start;
   cursor: pointer;
   flex-shrink: 0;
+  position: relative;
 }
 
 .chat:hover {
@@ -308,4 +309,13 @@ main>div:nth-of-type(2) {
   object-fit: cover;
   border-radius: 15px;
   margin: 5px;
+}
+
+.online {
+  position: absolute;
+  width: 10px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: rgb(100, 100, 100);
+  transform: translate(45px, 15px);
 }

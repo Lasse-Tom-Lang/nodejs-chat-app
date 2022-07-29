@@ -5,6 +5,8 @@ connectedUsers = [];
 chat = undefined;
 chatInfo = undefined;
 
+chatNameList = [];
+
 chatList = document.getElementById("chatList");
 messageDiv = document.querySelector("main>div:nth-of-type(2)");
 chatImage = document.querySelector("#chatInfos img");
@@ -78,11 +80,13 @@ fetch("/getUserInfos")
       chatList.innerHTML += `
         <button class="chat" onclick="setChat(` + element.id + `, 'chat');">
           <img src="profilePictures?user=` + element.user.id + `">
+          <div class="online"></div>
           <a>
             ` + element.user.name + `
           </a>
         </button>
       `;
+      chatNameList.push(element.user.name);
     });
     userInfo.groups.forEach(element => {
       chatList.innerHTML += `
@@ -98,9 +102,17 @@ fetch("/getUserInfos")
 
 socket.on("connected", (users) => {
   connectedUsers = users;
+  connectedUsers.forEach(element => {
+    if (chatNameList.includes(element)) {
+      chatList.children[chatNameList.indexOf(element) + 1].querySelector("div").style.backgroundColor = "rgb(86, 255, 100)";
+    }
+  });
 });
 
 socket.on("disconnected", (user) => {
+  if (chatNameList.includes(user)) {
+    chatList.children[chatNameList.indexOf(user) + 1].querySelector("div").style.backgroundColor = "rgb(100, 100, 100)";
+  }
   connectedUsers.pop(user);
 });
 
