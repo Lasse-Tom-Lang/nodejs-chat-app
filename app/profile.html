@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main>
+      <a href="/" id="backLink">
+        Back
+      </a>
+      <div>
+        <img src="" id="profileImage">
+        <p id="uploadErrorMessage">
+        </p>
+      </div>
+      <input type="file" id="profileImageUpload" style="display: none;">
+      <h1 id="userInfoName">
+      </h1>
+      </main>
+      <script>
+        profileImage = document.getElementById("profileImage");
+        profileImageUpload = document.getElementById("profileImageUpload");
+        profileImage.addEventListener("click", () => {
+          profileImageUpload.click();
+        });
+        profileImageUpload.addEventListener("change", () => {
+          if (profileImageUpload.files[0].type.split("/")[0] == "image") {
+
+          }
+        });
+        fetch("/getUserInfos")
+          .then(response => response.json())
+          .then(data => {
+            profileImage.src = "profilePictures?user=" + data.id;
+            document.getElementById("userInfoName").innerHTML = data.name;
+          });
+      </script>
+  </body>
+</html>

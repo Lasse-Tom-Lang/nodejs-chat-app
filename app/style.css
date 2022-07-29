@@ -95,6 +95,14 @@ main>div:nth-of-type(2) {
   }
 }
 
+@media screen and (max-width: 500px) {
+  main {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+}
+
 
 .chat {
   width: 100%;
@@ -318,4 +326,32 @@ main>div:nth-of-type(2) {
   border-radius: 50%;
   background-color: rgb(100, 100, 100);
   transform: translate(45px, 15px);
+}
+
+#backLink {
+  position: absolute;
+  top: 0;
+  left: 0;
+  text-decoration: none;
+  color: black;
+  padding: 8px;
+  background-color: white;
+  border-bottom-right-radius: 5px;
+}
+
+#profileImage {
+  width: 200px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#userInfoName {
+  margin-left: 20px;
+  font-size: 50px;
+}
+
+#uploadErrorMessage {
+  color: rgb(255, 67, 46);
+  text-align: center;
 }

@@ -70,6 +70,16 @@ app.get('/', (req, res) => {
   }
 });
 
+app.get("/profile", (req, res) => {
+  if (req.session.user) {
+    res.write(fs.readFileSync("../app/profile.html"));
+    res.end();
+  }
+  else {
+    res.redirect('/');
+  }
+});
+
 app.get('/style.css', (req, res) => {
   res.write(fs.readFileSync("../app/style.css"));
   res.end();
