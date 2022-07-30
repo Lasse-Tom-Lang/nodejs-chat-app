@@ -105,7 +105,7 @@ app.get('/profilePictures', (req, res) => {
 });
 
 app.get('/messageImages', (req, res) => {
-  if (fs.existsSync("data/Uploads/Images/" + req.query.messageID + "/" + req.query.imageName)) res.sendFile("data/Uploads/Images/" + req.query.messageID + "/" + req.query.imageName, { root : __dirname});
+  if (fs.existsSync("data/Uploads/Images/" + req.query.chatID + "/" + req.query.messageID + "/" + req.query.imageName)) res.sendFile("data/Uploads/Images/" + req.query.chatID + "/" + req.query.messageID + "/" + req.query.imageName, { root : __dirname});
   else res.sendFile("imageError.png", { root : __dirname});
 });
 
@@ -164,7 +164,7 @@ app.get("/getChat", (req, res) => {
 
 app.post("/uploadImage", (req, res) => {
   file = req.files.myFile;
-  path = __dirname + "/data/Uploads/Images/" + req.body.id;
+  path = __dirname + "/data/Uploads/Images/" + req.body.chatID + "/" + req.body.messageID;
   if (!fs.existsSync(path)) fs.mkdir(path, () => {});
   file.mv(path + "/" + file.name, (err) => {
     if (err) {

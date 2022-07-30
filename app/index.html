@@ -34,8 +34,11 @@
           <button id="chatMessageType" onclick="toggleMessageType()">Menu</button>
           <div id="messageTypeChoose">
             <button>Files</button>
-            <button>Images</button>
+            <button id="messageImageButton">Images</button>
+            <input type="file" id="messageImageUpload" multiple style="display: none;">
             <button>Link</button>
+          </div>
+          <div id="uploadInfo">
           </div>
           <textarea id="messageInput" placeholder="Enter message"></textarea>
           <button id="btn-send">Send</button>
