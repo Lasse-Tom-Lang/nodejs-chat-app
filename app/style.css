@@ -70,12 +70,15 @@ main>div:nth-of-type(2) {
   main {
     display: block;
   }
+
   main>div:nth-of-type(2) {
     width: 100%;
   }
+
   #chatList {
     width: 100%;
   }
+
   #chatBack {
     position: absolute;
     display: inline;
@@ -90,6 +93,7 @@ main>div:nth-of-type(2) {
     top: 0;
     left: 0;
   }
+
   #menuItems {
     width: 100%;
   }
@@ -413,10 +417,51 @@ main>div:nth-of-type(2) {
   cursor: pointer;
 }
 
-#messageTypeChoose button:hover{
+#messageTypeChoose button:hover {
   background-color: rgb(233, 233, 233);
 }
 
 #messageTypeChoose button:last-of-type {
   border-bottom: 0;
+}
+
+.ownMessage .messageLink {
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  width: calc(100% + 20px);
+  transform: translateX(10px);
+  text-align: center;
+  border-bottom: 1px solid black;
+  color: black !important;
+  text-decoration: none;
+  overflow-x: scroll;
+}
+
+.otherMessage .messageLink {
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  width: calc(100% + 20px);
+  transform: translateX(-10px);
+  text-align: center;
+  border-bottom: 1px solid black;
+  color: black !important;
+  text-decoration: none;
+  overflow-x: scroll;
+}
+
+#messageLinkInput {
+  width: calc(100% - 138px);
+  height: 24px;
+  background-color: white;
+  position: absolute;
+  text-align: center;
+  bottom: 40px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border: 0;
+  outline: 0;
+  font-size: 16px;
+  border-bottom: 1px solid black;
+  transition: 0.4s all ease-in-out;
+  display: none;
 }

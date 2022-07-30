@@ -35,6 +35,16 @@
           ],
           "messageID": 1234,
           "date": 1658668943481
+        },
+        {
+          "type": "link",
+          "text": "Look at my GitHub",
+          "link": "https://github.com/Lasse-Tom-Lang",
+          "user": {
+            "id": 40274829564,
+            "name": "Test"
+          },
+          "date": 1658668943481
         }
       ]
     }

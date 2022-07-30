@@ -7,7 +7,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const fileUpload = require('express-fileupload');
 const sessions = require('express-session');
-const oneDay = 1000 * 60 * 60 * 24;
+const oneDay = 86400000;
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 server.listen(8080);
@@ -31,14 +31,14 @@ function testLogin(user, password) {
       }
     });
     if (!correct) {
-      return {"status": 0, "errorMessage": "Login data incorrect"};
+      return { "status": 0, "errorMessage": "Login data incorrect" };
     }
     else {
-      return {"status": 1};
+      return { "status": 1 };
     }
   }
   else {
-    return {"status": 0, "errorMessage": "Data missing"};
+    return { "status": 0, "errorMessage": "Data missing" };
   }
 }
 
@@ -100,18 +100,18 @@ app.get('/userauthentification', (req, res) => {
 });
 
 app.get('/profilePictures', (req, res) => {
-  if (fs.existsSync("data/userImages/" + req.query.user + ".png")) res.sendFile("data/userImages/" + req.query.user + ".png", { root : __dirname});
-  else res.sendFile("imageError.png", { root : __dirname});
+  if (fs.existsSync("data/userImages/" + req.query.user + ".png")) res.sendFile("data/userImages/" + req.query.user + ".png", { root: __dirname });
+  else res.sendFile("imageError.png", { root: __dirname });
 });
 
 app.get('/messageImages', (req, res) => {
-  if (fs.existsSync("data/Uploads/Images/" + req.query.chatID + "/" + req.query.messageID + "/" + req.query.imageName)) res.sendFile("data/Uploads/Images/" + req.query.chatID + "/" + req.query.messageID + "/" + req.query.imageName, { root : __dirname});
-  else res.sendFile("imageError.png", { root : __dirname});
+  if (fs.existsSync("data/Uploads/Images/" + req.query.chatID + "/" + req.query.messageID + "/" + req.query.imageName)) res.sendFile("data/Uploads/Images/" + req.query.chatID + "/" + req.query.messageID + "/" + req.query.imageName, { root: __dirname });
+  else res.sendFile("imageError.png", { root: __dirname });
 });
 
 app.get("/getUserInfos", (req, res) => {
   if (req.session.user) {
-    for (i=0; i < usersInfo.length; i++) {
+    for (i = 0; i < usersInfo.length; i++) {
       if (usersInfo[i].name == req.session.user) {
         res.json(usersInfo[i]);
         res.end();
@@ -119,7 +119,7 @@ app.get("/getUserInfos", (req, res) => {
     }
   }
   else {
-    res.json({"status": 0 , "errorMessage": "Not logged in"});
+    res.json({ "status": 0, "errorMessage": "Not logged in" });
     res.end();
   }
 });
@@ -142,9 +142,9 @@ app.get("/getChat", (req, res) => {
         });
       }
       if (req.query.chatType == "group") {
-        chatIndex = chatInfo.groups.map((a) => {return a.id;}).indexOf(parseInt(req.query.chatID));
+        chatIndex = chatInfo.groups.map((a) => { return a.id; }).indexOf(parseInt(req.query.chatID));
         if (chatIndex != -1) {
-          if (chatInfo.groups[chatIndex].users.map((a) => {return a.name;}).includes(req.session.user)) {
+          if (chatInfo.groups[chatIndex].users.map((a) => { return a.name; }).includes(req.session.user)) {
             res.json(chatInfo.groups[chatIndex]);
             res.end();
           }
@@ -152,12 +152,12 @@ app.get("/getChat", (req, res) => {
       }
     }
     else {
-      res.json({"status": 0 , "errorMessage": "Data missing"});
+      res.json({ "status": 0, "errorMessage": "Data missing" });
       res.end();
     }
   }
   else {
-    res.json({"status": 0 , "errorMessage": "Not logged in"});
+    res.json({ "status": 0, "errorMessage": "Not logged in" });
     res.end();
   }
 });
@@ -165,12 +165,12 @@ app.get("/getChat", (req, res) => {
 app.post("/uploadImage", (req, res) => {
   file = req.files.myFile;
   path = __dirname + "/data/Uploads/Images/" + req.body.chatID + "/" + req.body.messageID;
-  if (!fs.existsSync(path)) fs.mkdir(path, () => {});
+  if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(path + "/" + file.name, (err) => {
     if (err) {
-      return res.send({"status": 0, "errorMessage": "Something went wrong"});
+      return res.send({ "status": 0, "errorMessage": "Something went wrong" });
     }
-    return res.send({"status": 1});
+    return res.send({ "status": 1 });
   });
 });
 

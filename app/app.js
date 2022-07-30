@@ -15,6 +15,7 @@ messages = document.getElementById("messages");
 messageTypeDiv = document.getElementById("messageTypeChoose");
 messageImageUpload = document.getElementById("messageImageUpload");
 uploadInfo = document.getElementById("uploadInfo");
+messageLinkInput = document.getElementById("messageLinkInput");
 imageMessagesIDs = [];
 
 messageType = "text";
@@ -35,8 +36,16 @@ document.getElementById("messageImageButton").addEventListener("click", () => {
 messageImageUpload.addEventListener("change", () => {
   messageTypeDiv.style.display = "none";
   uploadInfo.style.display = "block";
+  messageLinkInput.style.display = "none";
   uploadInfo.innerHTML = messageImageUpload.files.length + " Images choosen";
   messageType = "image";
+});
+
+document.getElementById("messageLinkButton").addEventListener("click", () => {
+  messageTypeDiv.style.display = "none";
+  uploadInfo.style.display = "none";
+  messageLinkInput.style.display = "block";
+  messageType = "link";
 });
 
 function setChat(chatID, chatType) {
@@ -72,6 +81,9 @@ function setChat(chatID, chatType) {
           element.images.forEach(image => {
             el.firstChild.innerHTML += "<img src='/messageImages?chatID=" + chatID + "&messageID=" + element.messageID + "&imageName=" + image + "'>";
           });
+        }
+        if (element.type == "link") {
+          el.innerHTML = "<a class='messageLink' href='" + element.link +"'>" + element.link + "</a>"
         }
         el.innerHTML += "<p>" + element.text + "</p><a>" + element.user.name + "</a>";
         messages.appendChild(el);
@@ -152,14 +164,20 @@ socket.on("message", message => {
       el.innerHTML = "<p>" + message.text + "</p><a>" + message.user + "</a>";
       messages.appendChild(el);
     }
-    if (message.type = "image") {
-      console.log(message);
+    else if (message.type == "image") {
       el = document.createElement("div");
       el.classList = "otherMessage";
       el.innerHTML = "<div>"
       message.images.forEach(image => {
         el.firstChild.innerHTML += "<img src='/messageImages?chatID=" + chat + "&messageID=" + message.messageID + "&imageName=" + image + "'>";
       });
+      el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
+      messages.appendChild(el);
+    }
+    else if (message.type == "link") {
+      el = document.createElement("div");
+      el.classList = "otherMessage";
+      el.innerHTML = "<a class='messageLink' href='" + message.link +"'>" + message.link + "</a>"
       el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
       messages.appendChild(el);
     }
@@ -172,6 +190,9 @@ textInput.addEventListener("input", () => {
     if (uploadInfo.style.display == "block") {
       uploadInfo.style.bottom = "160px";
     }
+    else if (messageLinkInput.style.display == "block") {
+      messageLinkInput.style.bottom = "160px";
+    }
     else {
       textInput.style.borderTopLeftRadius = "15px";
       textInput.style.borderTopRightRadius = "15px";
@@ -182,6 +203,7 @@ textInput.addEventListener("input", () => {
     textInput.style.borderTopLeftRadius = "0px";
     textInput.style.borderTopRightRadius = "0px";
     uploadInfo.style.bottom = "40px";
+    messageLinkInput.style.bottom = "40px";
   }
 });
 
@@ -236,5 +258,25 @@ document.getElementById("btn-send").addEventListener("click", () => {
     uploadInfo.style.bottom = "40px";
     uploadInfo.style.display = "none";
     messageImageUpload.value = null;
+    messageType = "text";
+  }
+  else if (messageType == "link" && chatInfo && messageLinkInput.value.trim().length != 0) {
+    text = textInput.value.replace(/</g, "&lt;");
+    text = text.replace(/>/g, "&gt;");
+    text = text.replace(/\n/g, "<br>");
+    socket.emit("message", { text: text, type: "link", link: messageLinkInput.value, user: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+    el = document.createElement("div");
+    el.classList = "ownMessage";
+    el.innerHTML = "<a class='messageLink' href='" + messageLinkInput.value +"'>" + messageLinkInput.value + "</a>"
+    el.innerHTML += "<p>" + text + "</p><a>" + userInfo.name + "</a>";
+    messages.appendChild(el);
+    textInput.value = "";
+    textInput.style.height = "30px";
+    textInput.style.borderTopLeftRadius = "0px";
+    textInput.style.borderTopRightRadius = "0px";
+    messageLinkInput.style.display = "none";
+    messageLinkInput.value = null;
+    messageLinkInput.style.bottom = "40px";
+    messageType = "text";
   }
 });
