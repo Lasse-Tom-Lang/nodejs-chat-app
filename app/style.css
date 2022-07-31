@@ -465,3 +465,84 @@ main>div:nth-of-type(2) {
   transition: 0.4s all ease-in-out;
   display: none;
 }
+
+#groupInfos {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(calc(100% - 40px), 400px);
+  height: calc(100% - 40px);
+  overflow: scroll;
+  background-color: white;
+  border-radius: 15px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 0 6px rgba(61, 61, 61, .5);
+  display: none;
+}
+
+#groupInfoImg {
+  width: 200px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  margin-top: 10px;
+}
+
+#groupInfoName {
+  font-size: 40px;
+}
+
+#groupInfoUsers {
+  width: calc(100% - 14px);
+  border-radius: 10px;
+  background-color: rgb(240, 240, 240);
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column
+}
+
+#groupInfoUsers a {
+  padding: 5px;
+  font-size: 20px;
+  border-bottom: 1px solid black;
+}
+
+#groupInfoUsers a:last-of-type {
+  border-bottom: 0;
+}
+
+#groupInfoUsers i {
+  color: grey;
+}
+
+#groupInfoLeave {
+  background-color: red;
+  color: white;
+  border: 0;
+  outline: 0;
+  width: calc(100% - 14px);
+  margin-top: 10px;
+  font-size: 25px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+#groupInfoClose {
+  position: absolute;
+  align-self: flex-start;
+  border: 0;
+  outline: 0;
+  font-size: 20px;
+  padding: 5px;
+  border-bottom-right-radius: 10px;
+  cursor: pointer;
+  background-color: rgb(240, 240, 240);
+}
+
+#groupInfoClose:hover {
+  background-color: rgb(233, 233, 233);
+}
