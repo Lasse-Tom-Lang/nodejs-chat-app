@@ -16,9 +16,51 @@ messageTypeDiv = document.getElementById("messageTypeChoose");
 messageImageUpload = document.getElementById("messageImageUpload");
 uploadInfo = document.getElementById("uploadInfo");
 messageLinkInput = document.getElementById("messageLinkInput");
+chatInfos = document.getElementById("chatInfos");
+groupInfos = document.getElementById("groupInfos");
+groupInfoImg = document.getElementById("groupInfoImg");
+groupInfoName = document.getElementById("groupInfoName");
+groupInfoUsers = document.getElementById("groupInfoUsers");
+groupInfoClose = document.getElementById("groupInfoClose");
+groupInfoLeave = document.getElementById("groupInfoLeave");
 imageMessagesIDs = [];
 
 messageType = "text";
+
+chatInfos.addEventListener("click", () => {
+  if (chat) {
+    groupInfos.style.display = "flex";
+    groupInfoUsers.innerHTML = "";
+    if (chatInfo.name) {
+      groupInfoImg.src = "profilePictures?user=" + chatInfo.id;
+      groupInfoName.innerHTML = chatInfo.name;
+      chatInfo.users.forEach(element => {
+        if (element.id == userInfo.id) {
+          groupInfoUsers.innerHTML += "<a>" + element.name + "<i> (You)</i></a>";
+        }
+        else {
+          groupInfoUsers.innerHTML += "<a>" + element.name + "</a>";
+        }
+      });
+      groupInfoLeave.innerHTML = "Leave group";
+    }
+    else {
+      if (chatInfo.users[0].id == userInfo.id) {
+        groupInfoImg.src = "profilePictures?user=" + chatInfo.users[1].id;
+        groupInfoName.innerHTML = chatInfo.users[1].name;
+      }
+      else if (chatInfo.users[1].id == userInfo.id) {
+        groupInfoImg.src = "profilePictures?user=" + chatInfo.users[0].id;
+        groupInfoName.innerHTML = chatInfo.users[0].name;
+      }
+      groupInfoLeave.innerHTML = "Leave chat";
+    }
+  }
+});
+
+groupInfoClose.addEventListener("click", () => {
+  groupInfos.style.display = "none";
+});
 
 function toggleMessageType() {
   if (messageTypeDiv.style.display == "flex") {
