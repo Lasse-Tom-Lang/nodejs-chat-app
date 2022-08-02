@@ -24,6 +24,7 @@ groupInfoUsers = document.getElementById("groupInfoUsers");
 groupInfoClose = document.getElementById("groupInfoClose");
 groupInfoLeave = document.getElementById("groupInfoLeave");
 imageMessagesIDs = [];
+fileMessagesIDs = [];
 
 messageType = "text";
 
@@ -126,6 +127,13 @@ function setChat(chatID, chatType) {
         }
         if (element.type == "link") {
           el.innerHTML = "<a class='messageLink' href='" + element.link +"'>" + element.link + "</a>"
+        }
+        if (element.type == "file") {
+          fileMessagesIDs.push(element.messageID);
+          el.innerHTML = "<div class='fileList'>";
+          element.files.forEach(file => {
+            el.firstChild.innerHTML += "<a href='fileDownload/" + file + "?chatID=" + chatID + "&messageID=" + element.id + "' download>" + file + "</a>";
+          });
         }
         el.innerHTML += "<p>" + element.text + "</p><a>" + element.user.name + "</a>";
         messages.appendChild(el);

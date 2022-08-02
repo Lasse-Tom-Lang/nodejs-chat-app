@@ -547,3 +547,18 @@ main>div:nth-of-type(2) {
 #groupInfoClose:hover {
   background-color: rgb(233, 233, 233);
 }
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  width: calc(100% + 20px);
+  border-bottom: 1px solid black;
+  margin-bottom: 5px;
+}
+
+.fileList a {
+  color: black;
+  padding: 4px;
+  text-decoration: none;
+  width: calc(100% - 10px);
+}

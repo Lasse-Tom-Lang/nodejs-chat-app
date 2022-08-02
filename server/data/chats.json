@@ -45,6 +45,20 @@
             "name": "Test"
           },
           "date": 1658668943481
+        },
+        {
+          "type": "file",
+          "id": 5678,
+          "text": "Download this files",
+          "files": [
+            "frontalface.xml",
+            "videoTests.py"
+          ],
+          "user": {
+            "id": 40274829564,
+            "name": "Test"
+          },
+          "date": 1658668943481
         }
       ]
     }

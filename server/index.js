@@ -174,6 +174,14 @@ app.post("/uploadImage", (req, res) => {
   });
 });
 
+app.use((req, res) => {
+  if (req.url.substring(0, 13) == '/fileDownload') {
+    if (fs.existsSync("data/Uploads/Files/" + req.query.chatID + "/" + req.query.messageID + "/" + req.url.substring(14).split("?")[0])) {
+      res.sendFile("data/Uploads/Files/" + req.query.chatID + "/" + req.query.messageID + "/" + req.url.substring(14).split("?")[0], { root: __dirname });
+    }
+  }
+});
+
 // Setup socket.io
 
 const users = {};
