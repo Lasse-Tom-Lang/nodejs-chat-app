@@ -174,11 +174,21 @@ app.post("/uploadImage", (req, res) => {
   });
 });
 
-app.use((req, res) => {
-  if (req.url.substring(0, 13) == '/fileDownload') {
-    if (fs.existsSync("data/Uploads/Files/" + req.query.chatID + "/" + req.query.messageID + "/" + req.url.substring(14).split("?")[0])) {
-      res.sendFile("data/Uploads/Files/" + req.query.chatID + "/" + req.query.messageID + "/" + req.url.substring(14).split("?")[0], { root: __dirname });
+app.post("/uploadFile", (req, res) => {
+  file = req.files.myFile;
+  path = __dirname + "/data/Uploads/Files/" + req.body.chatID + "/" + req.body.messageID;
+  if (!fs.existsSync(path)) fs.mkdir(path, () => { });
+  file.mv(path + "/" + file.name, (err) => {
+    if (err) {
+      return res.send({ "status": 0, "errorMessage": "Something went wrong" });
     }
+    return res.send({ "status": 1 });
+  });
+});
+
+app.use("/fileDownload/:fileName", (req, res) => {
+  if (fs.existsSync("data/Uploads/Files/" + req.query.chatID + "/" + req.query.messageID + "/" + req.params.fileName)) {
+    res.sendFile("data/Uploads/Files/" + req.query.chatID + "/" + req.query.messageID + "/" + req.params.fileName, { root: __dirname });
   }
 });
 
