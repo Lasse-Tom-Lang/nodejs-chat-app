@@ -280,19 +280,10 @@ document.getElementById("btn-send").addEventListener("click", () => {
       formdata.append("messageID", ID);
       xml.send(formdata);
     };
+    imageMessagesIDs.push(ID);
     text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
-    socket.emit("message", { text: text, type: "image", messageID: ID, images: imageList, user: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
-    el = document.createElement("div");
-    el.classList = "ownMessage";
-    imageMessagesIDs.push(ID);
-    el.innerHTML = "<div>"
-    imageList.forEach(image => {
-      el.firstChild.innerHTML += "<img src='/messageImages?chatID=" + chat + "&messageID=" + ID + "&imageName=" + image + "'>";
-    });
-    el.innerHTML += "<p>" + text + "</p><a>" + userInfo.name + "</a>";
-    messages.appendChild(el);
     textInput.value = "";
     textInput.style.height = "30px";
     textInput.style.borderTopLeftRadius = "0px";
@@ -301,6 +292,17 @@ document.getElementById("btn-send").addEventListener("click", () => {
     uploadInfo.style.display = "none";
     messageImageUpload.value = null;
     messageType = "text";
+    setTimeout(() => {
+      socket.emit("message", { text: text, type: "image", messageID: ID, images: imageList, user: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+      el = document.createElement("div");
+      el.classList = "ownMessage";
+      el.innerHTML = "<div>"
+      imageList.forEach(image => {
+        el.firstChild.innerHTML += "<img src='/messageImages?chatID=" + chat + "&messageID=" + ID + "&imageName=" + image + "'>";
+      });
+      el.innerHTML += "<p>" + text + "</p><a>" + userInfo.name + "</a>";
+      messages.appendChild(el);
+    }, imageList.length * 250);
   }
   else if (messageType == "link" && chatInfo && messageLinkInput.value.trim().length != 0) {
     text = textInput.value.replace(/</g, "&lt;");
