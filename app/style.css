@@ -211,6 +211,7 @@ main>div:nth-of-type(2) {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 #chatInfos img {
@@ -219,6 +220,7 @@ main>div:nth-of-type(2) {
   border-radius: 50%;
   margin-right: 10px;
   display: inline;
+  object-fit: cover;
 }
 
 #chatInfos img:empty {
@@ -363,6 +365,7 @@ main>div:nth-of-type(2) {
   aspect-ratio: 1;
   border-radius: 50%;
   cursor: pointer;
+  object-fit: cover;
 }
 
 #userInfoName {

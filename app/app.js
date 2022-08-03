@@ -139,7 +139,7 @@ function setChat(chatID, chatType) {
           });
         }
         if (element.type == "link") {
-          el.innerHTML = "<a class='messageLink' href='" + element.link +"'>" + element.link + "</a>"
+          el.innerHTML = "<a class='messageLink' href='" + element.link + "'>" + element.link + "</a>"
         }
         if (element.type == "file") {
           fileMessagesIDs.push(element.messageID);
@@ -240,14 +240,14 @@ socket.on("message", message => {
     else if (message.type == "link") {
       el = document.createElement("div");
       el.classList = "otherMessage";
-      el.innerHTML = "<a class='messageLink' href='" + message.link +"'>" + message.link + "</a>"
+      el.innerHTML = "<a class='messageLink' href='" + message.link + "'>" + message.link + "</a>"
       el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
       messages.appendChild(el);
     }
     else if (message.type == "file") {
       el = document.createElement("div");
       el.classList = "otherMessage";
-      el.innerHTML = "<a class='messageLink' href='" + message.link +"'>" + message.link + "</a>"
+      el.innerHTML = "<a class='messageLink' href='" + message.link + "'>" + message.link + "</a>"
       el.innerHTML = "<div class='fileList'>";
       message.files.forEach(file => {
         el.firstChild.innerHTML += "<a href='fileDownload/" + file + "?chatID=" + chat + "&messageID=" + message.messageID + "' download>" + file + "</a>";
@@ -303,14 +303,16 @@ document.getElementById("btn-send").addEventListener("click", () => {
     }
     imageList = [];
     for (i = 0; i < messageImageUpload.files.length; i++) {
-      imageList.push(messageImageUpload.files[i].name);
-      xml = new XMLHttpRequest();
-      xml.open('POST', '/uploadImage', true);
-      formdata = new FormData();
-      formdata.append("myFile", messageImageUpload.files[i]);
-      formdata.append("chatID", chat);
-      formdata.append("messageID", ID);
-      xml.send(formdata);
+      if (["png", "jpeg", "jpg"].includes(messageImageUpload.files[i].name.split(".")[1].toLowerCase())) {
+        imageList.push(messageImageUpload.files[i].name);
+        xml = new XMLHttpRequest();
+        xml.open('POST', '/uploadImage', true);
+        formdata = new FormData();
+        formdata.append("myFile", messageImageUpload.files[i]);
+        formdata.append("chatID", chat);
+        formdata.append("messageID", ID);
+        xml.send(formdata);
+      }
     };
     imageMessagesIDs.push(ID);
     text = textInput.value.replace(/</g, "&lt;");
@@ -343,7 +345,7 @@ document.getElementById("btn-send").addEventListener("click", () => {
     socket.emit("message", { text: text, type: "link", link: messageLinkInput.value, user: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
     el = document.createElement("div");
     el.classList = "ownMessage";
-    el.innerHTML = "<a class='messageLink' href='" + messageLinkInput.value +"'>" + messageLinkInput.value + "</a>"
+    el.innerHTML = "<a class='messageLink' href='" + messageLinkInput.value + "'>" + messageLinkInput.value + "</a>"
     el.innerHTML += "<p>" + text + "</p><a>" + userInfo.name + "</a>";
     messages.appendChild(el);
     textInput.value = "";

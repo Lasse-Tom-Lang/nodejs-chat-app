@@ -186,6 +186,18 @@ app.post("/uploadFile", (req, res) => {
   });
 });
 
+app.post("/changeProfilePicture", (req, res) => {
+  file = req.files.myFile;
+  path = __dirname + "/data/userImages";
+  file.mv(path + "/" + file.name, (err) => {
+    if (err) {
+      return res.send({ "status": 0, "errorMessage": "Something went wrong" });
+    }
+    fs.rename(path + "/" + file.name, usersInfo.forEach(element => { if (element.name == req.session.user) return element.id }) + ".png");
+    return res.send({ "status": 1 });
+  });
+});
+
 app.use("/fileDownload/:fileName", (req, res) => {
   if (fs.existsSync("data/Uploads/Files/" + req.query.chatID + "/" + req.query.messageID + "/" + req.params.fileName)) {
     res.sendFile("data/Uploads/Files/" + req.query.chatID + "/" + req.query.messageID + "/" + req.params.fileName, { root: __dirname });
