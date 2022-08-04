@@ -7,6 +7,7 @@ chatInfo = undefined;
 
 chatNameList = [];
 
+textInput = document.getElementById("messageInput");
 chatList = document.getElementById("chatList");
 messageDiv = document.querySelector("main>div:nth-of-type(2)");
 chatImage = document.querySelector("#chatInfos img");
@@ -152,14 +153,14 @@ function setChat(chatID, chatType) {
         messages.appendChild(el);
       });
     });
-  if (window.screen.availWidth <= 800 && chat) {
+  if (window.innerWidth <= 800 && chat) {
     chatList.style.display = "none";
     messageDiv.style.display = "block";
   }
 }
 
 function back() {
-  chat = "";
+  chat = undefined;
   chatList.style.display = "flex";
   messageDiv.style.display = "none";
 }
@@ -216,8 +217,6 @@ socket.on("disconnected", (user) => {
   }
   connectedUsers.pop(user);
 });
-
-textInput = document.getElementById("messageInput");
 
 socket.on("message", message => {
   if (message.chat == chat) {

@@ -28,8 +28,12 @@
         profileImageUpload.click();
       });
       profileImageUpload.addEventListener("change", () => {
-        if (profileImageUpload.files[0].type.split("/")[0] == "image") {
-
+        if (["png", "jpeg", "jpg"].includes(profileImageUpload.files[0].name.split(".")[1].toLowerCase())) {
+          xml = new XMLHttpRequest();
+          xml.open('POST', '/changeProfilePicture', true);
+          formdata = new FormData();
+          formdata.append("myFile", profileImageUpload.files[0]);
+          xml.send(formdata);
         }
       });
       fetch("/getUserInfos")
