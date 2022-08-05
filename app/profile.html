@@ -6,24 +6,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
   </head>
   <body>
     <main>
       <a href="/" id="backLink">
         Back
       </a>
-      <div>
-        <img src="" id="profileImage">
+      <div id="profileInfoWrapper">
+        <div>
+          <img src="" id="profileImage">
+          <input type="file" id="profileImageUpload" style="display: none;">
+          <h1 id="userInfoName">
+          </h1>
+        </div>
         <p id="uploadErrorMessage">
         </p>
       </div>
-      <input type="file" id="profileImageUpload" style="display: none;">
-      <h1 id="userInfoName">
-      </h1>
+      <div id="passwordChangeDiv">
+        <input type="password" id="oldPasswordInput" placeholder="Old password">
+        <input type="password" id="newPasswordInput" placeholder="New password">
+        <button id="btn-changePassword">
+          Change Password
+        </button>
+      </div>
     </main>
     <script>
       profileImage = document.getElementById("profileImage");
       profileImageUpload = document.getElementById("profileImageUpload");
+      uploadErrorMessage = document.getElementById("uploadErrorMessage");
+      oldPasswordInput = document.getElementById("oldPasswordInput");
+      newPasswordInput = document.getElementById("newPasswordInput");
+      btnChangePassword = document.getElementById("btn-changePassword");
+
+      btnChangePassword.addEventListener("click", () => {
+        if (newPasswordInput.value.length > 10 && newPasswordInput.value.indexOf(' ') == -1) {
+          if (oldPasswordInput.value.trim().length > 10) {
+
+          }
+          else {
+            oldPasswordInput.style.backgroundColor = "rgb(255, 49, 49)";
+            oldPasswordInput.style.color = "white";
+          }
+        }
+        else {
+          newPasswordInput.style.backgroundColor = "rgb(255, 49, 49)";
+          newPasswordInput.style.color = "white";
+          if (oldPasswordInput.value.trim().length < 10) {
+            oldPasswordInput.style.backgroundColor = "rgb(255, 49, 49)";
+            oldPasswordInput.style.color = "white";
+          }
+        }
+      });
+
       profileImage.addEventListener("click", () => {
         profileImageUpload.click();
       });
@@ -34,6 +70,9 @@
           formdata = new FormData();
           formdata.append("myFile", profileImageUpload.files[0]);
           xml.send(formdata);
+        }
+        else {
+          uploadErrorMessage.innerHTML = "Not supported file type."
         }
       });
       fetch("/getUserInfos")

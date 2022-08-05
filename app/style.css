@@ -371,11 +371,13 @@ main>div:nth-of-type(2) {
 #userInfoName {
   margin-left: 20px;
   font-size: 50px;
+  text-align: center;
 }
 
 #uploadErrorMessage {
   color: rgb(255, 67, 46);
   text-align: center;
+  padding: 10px;
 }
 
 #chatMessageType {
@@ -564,4 +566,52 @@ main>div:nth-of-type(2) {
   padding: 4px;
   text-decoration: none;
   width: calc(100% - 10px);
+}
+
+#passwordChangeDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: auto;
+  margin-left: 20px;
+}
+
+#passwordChangeDiv input {
+  border: 0;
+  outline: 0;
+  padding: 8px;
+  margin: 5px;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+#btn-changePassword {
+  border: 0;
+  outline: 0;
+  padding: 8px;
+  margin: 5px;
+  background-color: white;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  width: calc(100% - 10px);
+}
+
+#btn-changePassword:hover {
+  background-color: rgb(233, 233, 233);
+}
+
+#profileInfoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 10px;
+}
+
+#profileInfoWrapper div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

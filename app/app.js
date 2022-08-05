@@ -220,39 +220,41 @@ socket.on("disconnected", (user) => {
 
 socket.on("message", message => {
   if (message.chat == chat) {
-    if (message.type == "text") {
-      el = document.createElement("div");
-      el.classList = "otherMessage";
-      el.innerHTML = "<p>" + message.text + "</p><a>" + message.user + "</a>";
-      messages.appendChild(el);
-    }
-    else if (message.type == "image") {
-      el = document.createElement("div");
-      el.classList = "otherMessage";
-      el.innerHTML = "<div>"
-      message.images.forEach(image => {
-        el.firstChild.innerHTML += "<img src='/messageImages?chatID=" + chat + "&messageID=" + message.messageID + "&imageName=" + image + "'>";
-      });
-      el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
-      messages.appendChild(el);
-    }
-    else if (message.type == "link") {
-      el = document.createElement("div");
-      el.classList = "otherMessage";
-      el.innerHTML = "<a class='messageLink' href='" + message.link + "'>" + message.link + "</a>"
-      el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
-      messages.appendChild(el);
-    }
-    else if (message.type == "file") {
-      el = document.createElement("div");
-      el.classList = "otherMessage";
-      el.innerHTML = "<a class='messageLink' href='" + message.link + "'>" + message.link + "</a>"
-      el.innerHTML = "<div class='fileList'>";
-      message.files.forEach(file => {
-        el.firstChild.innerHTML += "<a href='fileDownload/" + file + "?chatID=" + chat + "&messageID=" + message.messageID + "' download>" + file + "</a>";
-      });
-      el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
-      messages.appendChild(el);
+    switch (message.type) {
+      case "text":
+        el = document.createElement("div");
+        el.classList = "otherMessage";
+        el.innerHTML = "<p>" + message.text + "</p><a>" + message.user + "</a>";
+        messages.appendChild(el);
+        break;
+      case "image":
+        el = document.createElement("div");
+        el.classList = "otherMessage";
+        el.innerHTML = "<div>"
+        message.images.forEach(image => {
+          el.firstChild.innerHTML += "<img src='/messageImages?chatID=" + chat + "&messageID=" + message.messageID + "&imageName=" + image + "'>";
+        });
+        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
+        messages.appendChild(el);
+        break;
+      case "link":
+        el = document.createElement("div");
+        el.classList = "otherMessage";
+        el.innerHTML = "<a class='messageLink' href='" + message.link + "'>" + message.link + "</a>"
+        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
+        messages.appendChild(el);
+        break;
+      case "file":
+        el = document.createElement("div");
+        el.classList = "otherMessage";
+        el.innerHTML = "<a class='messageLink' href='" + message.link + "'>" + message.link + "</a>"
+        el.innerHTML = "<div class='fileList'>";
+        message.files.forEach(file => {
+          el.firstChild.innerHTML += "<a href='fileDownload/" + file + "?chatID=" + chat + "&messageID=" + message.messageID + "' download>" + file + "</a>";
+        });
+        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
+        messages.appendChild(el);
+        break;
     }
   }
 });
