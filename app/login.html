@@ -31,7 +31,7 @@
       error = document.getElementById("error");
 
       document.getElementById("btn-login").addEventListener("click", () => {
-        fetch("/userauthentification?user=" + username.value + "&password=" + CryptoJS.MD5(password.value).toString())
+        fetch(`/userauthentification?user=${username.value}&password=${CryptoJS.MD5(password.value).toString()}`)
           .then((response) => response.json())
           .then((data) => {
             if (data.status != 1) {

@@ -35,25 +35,25 @@ chatInfos.addEventListener("click", () => {
     groupInfos.style.display = "flex";
     groupInfoUsers.innerHTML = "";
     if (chatInfo.name) {
-      groupInfoImg.src = "profilePictures?user=" + chatInfo.id;
+      groupInfoImg.src = `profilePictures?user=${chatInfo.id}`;
       groupInfoName.innerHTML = chatInfo.name;
       chatInfo.users.forEach(element => {
         if (element.id == userInfo.id) {
-          groupInfoUsers.innerHTML += "<a>" + element.name + "<i> (You)</i></a>";
+          groupInfoUsers.innerHTML += `<a>${element.name}<i> (You)</i></a>`;
         }
         else {
-          groupInfoUsers.innerHTML += "<a>" + element.name + "</a>";
+          groupInfoUsers.innerHTML += `<a>${element.name}</a>`;
         }
       });
       groupInfoLeave.innerHTML = "Leave group";
     }
     else {
       if (chatInfo.users[0].id == userInfo.id) {
-        groupInfoImg.src = "profilePictures?user=" + chatInfo.users[1].id;
+        groupInfoImg.src = `profilePictures?user=${chatInfo.users[1].id}`;
         groupInfoName.innerHTML = chatInfo.users[1].name;
       }
       else if (chatInfo.users[1].id == userInfo.id) {
-        groupInfoImg.src = "profilePictures?user=" + chatInfo.users[0].id;
+        groupInfoImg.src = `profilePictures?user=${chatInfo.users[0].id}`;
         groupInfoName.innerHTML = chatInfo.users[0].name;
       }
       groupInfoLeave.innerHTML = "Leave chat";
@@ -86,7 +86,7 @@ messageImageUpload.addEventListener("change", () => {
   messageTypeDiv.style.display = "none";
   uploadInfo.style.display = "block";
   messageLinkInput.style.display = "none";
-  uploadInfo.innerHTML = messageImageUpload.files.length + " Images choosen";
+  uploadInfo.innerHTML = `${messageImageUpload.files.length} Images choosen`;
   messageType = "image";
 });
 
@@ -94,7 +94,7 @@ messageFileUpload.addEventListener("change", () => {
   messageTypeDiv.style.display = "none";
   uploadInfo.style.display = "block";
   messageLinkInput.style.display = "none";
-  uploadInfo.innerHTML = messageFileUpload.files.length + " Files choosen";
+  uploadInfo.innerHTML = `${messageFileUpload.files.length} Files choosen`;
   messageType = "file";
 });
 
@@ -107,24 +107,24 @@ document.getElementById("messageLinkButton").addEventListener("click", () => {
 
 function setChat(chatID, chatType) {
   chat = chatID;
-  fetch("/getChat?chatID=" + chatID + "&chatType=" + chatType)
+  fetch(`/getChat?chatID=${chatID}&chatType=${chatType}`)
     .then(response => response.json())
     .then(data => {
       chatInfo = data;
       if (chatType == "chat") {
         if (chatInfo.users[0].id == userInfo.id) {
-          chatImage.src = "profilePictures?user=" + chatInfo.users[1].id;
+          chatImage.src = `profilePictures?user=${chatInfo.users[1].id}`;
           chatImage.style.display = "inline";
           chatName.innerHTML = chatInfo.users[1].name;
         }
         else if (chatInfo.users[1].id == userInfo.id) {
-          chatImage.src = "profilePictures?user=" + chatInfo.users[0].id;
+          chatImage.src = `profilePictures?user=${chatInfo.users[0].id}`;
           chatImage.style.display = "inline";
           chatName.innerHTML = chatInfo.users[0].name;
         }
       }
       else if (chatType == "group") {
-        chatImage.src = "profilePictures?user=" + chatInfo.id;
+        chatImage.src = `profilePictures?user=${chatInfo.id}`;
         chatImage.style.display = "inline";
         chatName.innerHTML = chatInfo.name;
       }
@@ -134,22 +134,22 @@ function setChat(chatID, chatType) {
         el.classList = element.user.id == userInfo.id ? "ownMessage" : "otherMessage";
         if (element.type == "image") {
           imageMessagesIDs.push(element.messageID);
-          el.innerHTML = "<div>"
+          el.innerHTML = "<div>";
           element.images.forEach(image => {
-            el.firstChild.innerHTML += "<img src='/messageImages?chatID=" + chatID + "&messageID=" + element.messageID + "&imageName=" + image + "'>";
+            el.firstChild.innerHTML += `<img src='/messageImages?chatID=${chatID}&messageID=${element.messageID}&imageName=${image}'>`;
           });
         }
         if (element.type == "link") {
-          el.innerHTML = "<a class='messageLink' href='" + element.link + "'>" + element.link + "</a>"
+          el.innerHTML = `<a class='messageLink' href='${element.link}'>${element.link}</a>`;
         }
         if (element.type == "file") {
           fileMessagesIDs.push(element.messageID);
           el.innerHTML = "<div class='fileList'>";
           element.files.forEach(file => {
-            el.firstChild.innerHTML += "<a href='fileDownload/" + file + "?chatID=" + chatID + "&messageID=" + element.id + "' download>" + file + "</a>";
+            el.firstChild.innerHTML += `<a href='fileDownload/${file}?chatID=${chatID}&messageID=${element.id}' download>${file}</a>`;
           });
         }
-        el.innerHTML += "<p>" + element.text + "</p><a>" + element.user.name + "</a>";
+        el.innerHTML += `<p>${element.text}</p><a>${element.user.name}</a>`;
         messages.appendChild(el);
       });
     });
@@ -180,11 +180,11 @@ fetch("/getUserInfos")
     socket.emit("connected", data.name);
     userInfo.chats.forEach(element => {
       chatList.innerHTML += `
-        <button class="chat" onclick="setChat(` + element.id + `, 'chat');">
-          <img src="profilePictures?user=` + element.user.id + `">
+        <button class="chat" onclick="setChat(${element.id}, 'chat');">
+          <img src="profilePictures?user=${element.user.id}">
           <div class="online"></div>
           <a>
-            ` + element.user.name + `
+            ${element.user.name}
           </a>
         </button>
       `;
@@ -192,10 +192,10 @@ fetch("/getUserInfos")
     });
     userInfo.groups.forEach(element => {
       chatList.innerHTML += `
-        <button class="chat" onclick="setChat(` + element.id + `, 'group');">
-          <img src="profilePictures?user=` + element.id + `">
+        <button class="chat" onclick="setChat(${element.id}, 'group');">
+          <img src="profilePictures?user=${element.id}">
           <a>
-            ` + element.name + `
+            ${element.name}
           </a>
         </button>
       `;
@@ -224,7 +224,7 @@ socket.on("message", message => {
       case "text":
         el = document.createElement("div");
         el.classList = "otherMessage";
-        el.innerHTML = "<p>" + message.text + "</p><a>" + message.user.name + "</a>";
+        el.innerHTML = `<p>${message.text}</p><a>${message.user.name}</a>`;
         messages.appendChild(el);
         break;
       case "image":
@@ -232,27 +232,27 @@ socket.on("message", message => {
         el.classList = "otherMessage";
         el.innerHTML = "<div>"
         message.images.forEach(image => {
-          el.firstChild.innerHTML += "<img src='/messageImages?chatID=" + chat + "&messageID=" + message.messageID + "&imageName=" + image + "'>";
+          el.firstChild.innerHTML += `<img src='/messageImages?chatID=${chat}&messageID=${message.messageID}&imageName=${image}'>`;
         });
-        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user.name + "</a>";
+        el.innerHTML += `<p>${message.text}</p><a>${message.user.name}</a>`;
         messages.appendChild(el);
         break;
       case "link":
         el = document.createElement("div");
         el.classList = "otherMessage";
-        el.innerHTML = "<a class='messageLink' href='" + message.link + "'>" + message.link + "</a>"
-        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user.name + "</a>";
+        el.innerHTML = `<a class='messageLink' href='${message.link}'>${message.link}</a>`;
+        el.innerHTML += `<p>${message.text}</p><a>${message.user.name}</a>`;
         messages.appendChild(el);
         break;
       case "file":
         el = document.createElement("div");
         el.classList = "otherMessage";
-        el.innerHTML = "<a class='messageLink' href='" + message.link + "'>" + message.link + "</a>"
+        el.innerHTML = `<a class='messageLink' href='${message.link}'>${message.link}</a>`;
         el.innerHTML = "<div class='fileList'>";
         message.files.forEach(file => {
-          el.firstChild.innerHTML += "<a href='fileDownload/" + file + "?chatID=" + chat + "&messageID=" + message.messageID + "' download>" + file + "</a>";
+          el.firstChild.innerHTML += `<a href='fileDownload/${file}?chatID=${chat}&messageID=${message.messageID}' download>${file}</a>`;
         });
-        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user.name + "</a>";
+        el.innerHTML += `<p>${message.text}</p><a>${message.user.name}</a>`;
         messages.appendChild(el);
         break;
     }
@@ -333,9 +333,9 @@ document.getElementById("btn-send").addEventListener("click", () => {
       el.classList = "ownMessage";
       el.innerHTML = "<div>"
       imageList.forEach(image => {
-        el.firstChild.innerHTML += "<img src='/messageImages?chatID=" + chat + "&messageID=" + ID + "&imageName=" + image + "'>";
+        el.firstChild.innerHTML += `<img src='/messageImages?chatID=${chat}&messageID=${ID}&imageName=${image}'>`;
       });
-      el.innerHTML += "<p>" + text + "</p><a>" + userInfo.name + "</a>";
+      el.innerHTML += `<p>${text}</p><a>${userInfo.name}</a>`;
       messages.appendChild(el);
     }, imageList.length * 250);
   }
@@ -346,8 +346,8 @@ document.getElementById("btn-send").addEventListener("click", () => {
     socket.emit("message", { text: text, type: "link", link: messageLinkInput.value, user: {name: userInfo.name, id: userInfo.id}, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
     el = document.createElement("div");
     el.classList = "ownMessage";
-    el.innerHTML = "<a class='messageLink' href='" + messageLinkInput.value + "'>" + messageLinkInput.value + "</a>"
-    el.innerHTML += "<p>" + text + "</p><a>" + userInfo.name + "</a>";
+    el.innerHTML = `<a class='messageLink' href='${messageLinkInput.value}'>${messageLinkInput.value}</a>`;
+    el.innerHTML += `<p>${text}</p><a>${userInfo.name}</a>`;
     messages.appendChild(el);
     textInput.value = "";
     textInput.style.height = "30px";
@@ -391,9 +391,9 @@ document.getElementById("btn-send").addEventListener("click", () => {
     el.classList = "ownMessage";
     el.innerHTML = "<div class='fileList'>";
     fileList.forEach(file => {
-      el.firstChild.innerHTML += "<a href='fileDownload/" + file + "?chatID=" + chat + "&messageID=" + ID + "' download>" + file + "</a>";
+      el.firstChild.innerHTML += `<a href='fileDownload/${file}?chatID=${chat}&messageID=${ID}' download>${file}</a>`;
     });
-    el.innerHTML += "<p>" + text + "</p><a>" + userInfo.name + "</a>";
+    el.innerHTML += `<p>${text}</p><a>${userInfo.name}</a>`;
     messages.appendChild(el);
   }
 });

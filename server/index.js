@@ -100,12 +100,12 @@ app.get('/userauthentification', (req, res) => {
 });
 
 app.get('/profilePictures', (req, res) => {
-  if (fs.existsSync("data/userImages/" + req.query.user + ".png")) res.sendFile("data/userImages/" + req.query.user + ".png", { root: __dirname });
+  if (fs.existsSync(`data/userImages/${req.query.user}.png`)) res.sendFile(`data/userImages/${req.query.user}.png`, { root: __dirname });
   else res.sendFile("imageError.png", { root: __dirname });
 });
 
 app.get('/messageImages', (req, res) => {
-  if (fs.existsSync("data/Uploads/Images/" + req.query.chatID + "/" + req.query.messageID + "/" + req.query.imageName)) res.sendFile("data/Uploads/Images/" + req.query.chatID + "/" + req.query.messageID + "/" + req.query.imageName, { root: __dirname });
+  if (fs.existsSync(`data/Uploads/Images/${req.query.chatID}/${req.query.messageID}/${req.query.imageName}`)) res.sendFile(`data/Uploads/Images/${req.query.chatID}/${req.query.messageID}/${req.query.imageName}`, { root: __dirname });
   else res.sendFile("imageError.png", { root: __dirname });
 });
 
@@ -164,9 +164,9 @@ app.get("/getChat", (req, res) => {
 
 app.post("/uploadImage", (req, res) => {
   file = req.files.myFile;
-  path = __dirname + "/data/Uploads/Images/" + req.body.chatID + "/" + req.body.messageID;
+  path = __dirname + `/data/Uploads/Images/${req.body.chatID}/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
-  file.mv(path + "/" + file.name, (err) => {
+  file.mv(`${path}/${file.name}`, (err) => {
     if (err) {
       return res.send({ "status": 0, "errorMessage": "Something went wrong" });
     }
@@ -176,9 +176,9 @@ app.post("/uploadImage", (req, res) => {
 
 app.post("/uploadFile", (req, res) => {
   file = req.files.myFile;
-  path = __dirname + "/data/Uploads/Files/" + req.body.chatID + "/" + req.body.messageID;
+  path = __dirname + `/data/Uploads/Files/${req.body.chatID}/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
-  file.mv(path + "/" + file.name, (err) => {
+  file.mv(`${path}/${file.name}`, (err) => {
     if (err) {
       return res.send({ "status": 0, "errorMessage": "Something went wrong" });
     }
@@ -201,8 +201,8 @@ app.post("/changeProfilePicture", (req, res) => {
 });
 
 app.use("/fileDownload/:fileName", (req, res) => {
-  if (fs.existsSync("data/Uploads/Files/" + req.query.chatID + "/" + req.query.messageID + "/" + req.params.fileName)) {
-    res.sendFile("data/Uploads/Files/" + req.query.chatID + "/" + req.query.messageID + "/" + req.params.fileName, { root: __dirname });
+  if (fs.existsSync(`data/Uploads/Files/${req.query.chatID}/${req.query.messageID}/${req.params.fileName}`)) {
+    res.sendFile(`data/Uploads/Files/${req.query.chatID}/${req.query.messageID}/${req.params.fileName}`, { root: __dirname });
   }
 });
 

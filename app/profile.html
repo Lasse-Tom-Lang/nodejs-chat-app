@@ -78,7 +78,7 @@
       fetch("/getUserInfos")
         .then(response => response.json())
         .then(data => {
-          profileImage.src = "profilePictures?user=" + data.id;
+          profileImage.src = `profilePictures?user=${data.id}`;
           document.getElementById("userInfoName").innerHTML = data.name;
         });
     </script>
