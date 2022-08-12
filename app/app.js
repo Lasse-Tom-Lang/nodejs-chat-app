@@ -224,7 +224,7 @@ socket.on("message", message => {
       case "text":
         el = document.createElement("div");
         el.classList = "otherMessage";
-        el.innerHTML = "<p>" + message.text + "</p><a>" + message.user + "</a>";
+        el.innerHTML = "<p>" + message.text + "</p><a>" + message.user.name + "</a>";
         messages.appendChild(el);
         break;
       case "image":
@@ -234,14 +234,14 @@ socket.on("message", message => {
         message.images.forEach(image => {
           el.firstChild.innerHTML += "<img src='/messageImages?chatID=" + chat + "&messageID=" + message.messageID + "&imageName=" + image + "'>";
         });
-        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
+        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user.name + "</a>";
         messages.appendChild(el);
         break;
       case "link":
         el = document.createElement("div");
         el.classList = "otherMessage";
         el.innerHTML = "<a class='messageLink' href='" + message.link + "'>" + message.link + "</a>"
-        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
+        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user.name + "</a>";
         messages.appendChild(el);
         break;
       case "file":
@@ -252,7 +252,7 @@ socket.on("message", message => {
         message.files.forEach(file => {
           el.firstChild.innerHTML += "<a href='fileDownload/" + file + "?chatID=" + chat + "&messageID=" + message.messageID + "' download>" + file + "</a>";
         });
-        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user + "</a>";
+        el.innerHTML += "<p>" + message.text + "</p><a>" + message.user.name + "</a>";
         messages.appendChild(el);
         break;
     }
@@ -287,7 +287,7 @@ document.getElementById("btn-send").addEventListener("click", () => {
     text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
-    socket.emit("message", { text: text, type: "text", user: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+    socket.emit("message", { text: text, type: "text", user: {name: userInfo.name, id: userInfo.id}, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
     el = document.createElement("div");
     el.classList = "ownMessage";
     el.innerHTML = "<p>" + text + "</p><a>" + userInfo.name + "</a>";
@@ -328,7 +328,7 @@ document.getElementById("btn-send").addEventListener("click", () => {
     messageImageUpload.value = null;
     messageType = "text";
     setTimeout(() => {
-      socket.emit("message", { text: text, type: "image", messageID: ID, images: imageList, user: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+      socket.emit("message", { text: text, type: "image", messageID: ID, images: imageList, user: {name: userInfo.name, id: userInfo.id}, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
       el = document.createElement("div");
       el.classList = "ownMessage";
       el.innerHTML = "<div>"
@@ -343,7 +343,7 @@ document.getElementById("btn-send").addEventListener("click", () => {
     text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
-    socket.emit("message", { text: text, type: "link", link: messageLinkInput.value, user: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+    socket.emit("message", { text: text, type: "link", link: messageLinkInput.value, user: {name: userInfo.name, id: userInfo.id}, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
     el = document.createElement("div");
     el.classList = "ownMessage";
     el.innerHTML = "<a class='messageLink' href='" + messageLinkInput.value + "'>" + messageLinkInput.value + "</a>"
@@ -386,7 +386,7 @@ document.getElementById("btn-send").addEventListener("click", () => {
     uploadInfo.style.display = "none";
     messageFileUpload.value = null;
     messageType = "text";
-    socket.emit("message", { text: text, type: "file", messageID: ID, files: fileList, user: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+    socket.emit("message", { text: text, type: "file", messageID: ID, files: fileList, user: {name: userInfo.name, id: userInfo.id}, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
     el = document.createElement("div");
     el.classList = "ownMessage";
     el.innerHTML = "<div class='fileList'>";

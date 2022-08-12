@@ -223,6 +223,48 @@ io.on("connection", (socket) => {
   })
 
   socket.on("message", (message) => {
+    chatInfo.chats.forEach((element, count) => {
+      if (element.id == message.chat) {
+        newMessage = {type: message.type, text: message.text, date: new Date(), user: message.user};
+        if (message.type != "text") {
+          newMessage.messageID = message.messageID;
+          switch (message.type) {
+            case "link":
+              newMessage.link = message.link;
+              break;
+            case "file":
+              newMessage.files = message.files;
+              break;
+            case "image":
+              newMessage.images = message.images;
+              break;
+          }
+        }
+        chatInfo.chats[count].messages.push(newMessage);
+        return;
+      }
+    });
+    chatInfo.groups.forEach((element, count) => {
+      if (element.id == message.chat) {
+        newMessage = {type: message.type, text: message.text, date: new Date(), user: message.user};
+        if (message.type != "text") {
+          newMessage.messageID = message.messageID;
+          switch (message.type) {
+            case "link":
+              newMessage.link = message.link;
+              break;
+            case "file":
+              newMessage.files = message.files;
+              break;
+            case "image":
+              newMessage.images = message.images;
+              break;
+          }
+        }
+        chatInfo.groups[count].messages.push(newMessage);
+        return;
+      }
+    });
     message.sendTo.forEach(element => {
       if (users[element]) {
         socket.broadcast.to(users[element]).emit("message", message);
