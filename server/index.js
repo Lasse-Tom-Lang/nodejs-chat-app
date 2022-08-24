@@ -13,6 +13,39 @@ var io = require('socket.io')(server);
 server.listen(8080);
 
 // Loding user data
+
+const {PrismaClient} = require("@prisma/client");
+const prisma = new PrismaClient()
+
+async function test() {
+  // data = await prisma.chat.create({
+  //   data: {
+  //     users: {connect: [{name: "Test"}]},
+  //   }
+  // })
+  // console.log(data)
+  data = await prisma.user.findFirst(
+    {
+      where: {
+        name: "Test"
+      },
+      select:{
+        chats: true
+      }
+    }
+  )
+  // data = await prisma.user.update(
+  //   {
+  //     where: {name: "Test"},
+  //     data: {
+  //       chats: {connect: [{chatID: '9d997e39-64c5-4a8c-8f2f-00a13bc02275'}]}
+  //     }
+  //   }
+  // )
+  console.log(data)
+}
+test()
+
 usersInfo = JSON.parse(fs.readFileSync('data/users.json')).users;
 chatInfo = JSON.parse(fs.readFileSync('data/chats.json'))
 
@@ -21,16 +54,15 @@ chatInfo = JSON.parse(fs.readFileSync('data/chats.json'))
  * @param {string} password Password to check
  * @return {string} Gives back if login is correct
  */
-function testLogin(user, password) {
+async function testLogin(user, password) {
   if (user && password) {
-    correct = false;
-    usersInfo.forEach(element => {
-      if (element.name == user && element.password == password) {
-        correct = true;
-        return;
+    userData = await prisma.user.findFirst({
+      where: {
+        name: user,
+        password: password
       }
     });
-    if (!correct) {
+    if (!userData) {
       return { "status": 0, "errorMessage": "Login data incorrect" };
     }
     else {
@@ -90,8 +122,8 @@ app.get('/app.js', (req, res) => {
   res.end();
 });
 
-app.get('/userauthentification', (req, res) => {
-  answer = testLogin(req.query.user, req.query.password);
+app.get('/userauthentification', async (req, res) => {
+  answer = await testLogin(req.query.user, req.query.password);
   if (answer.status == 1) {
     req.session.user = req.query.user;
   }
@@ -109,14 +141,19 @@ app.get('/messageImages', (req, res) => {
   else res.sendFile("imageError.png", { root: __dirname });
 });
 
-app.get("/getUserInfos", (req, res) => {
+app.get("/getUserInfos", async (req, res) => {
   if (req.session.user) {
-    for (i = 0; i < usersInfo.length; i++) {
-      if (usersInfo[i].name == req.session.user) {
-        res.json(usersInfo[i]);
-        res.end();
+    userData = await prisma.user.findFirst(
+      {
+        where: {
+          name: req.session.user
+        },
+        select:{
+          chats: true
+        }
       }
-    }
+    )
+    console.log(userData);
   }
   else {
     res.json({ "status": 0, "errorMessage": "Not logged in" });
