@@ -27,13 +27,33 @@ async function test() {
   data = await prisma.user.findFirst(
     {
       where: {
-        name: "Test"
+        name: {in: ["Test", "User"]}
       },
       select:{
         chats: true
       }
     }
   )
+  console.log(data)
+  a = 0
+  await data.chats.forEach(async chat => { 
+    test = await prisma.chat.findUnique(
+      {
+        where: {
+          chatID: chat.chatID
+        },
+        include: {
+          users: {
+            select: {
+              name: true
+            }
+          }
+        }
+      }
+    )
+    data.chats[a] = Object.assign(data.chats[a], test)
+    a++
+  });
   // data = await prisma.user.update(
   //   {
   //     where: {name: "Test"},
@@ -42,7 +62,6 @@ async function test() {
   //     }
   //   }
   // )
-  console.log(data)
 }
 test()
 
@@ -142,18 +161,34 @@ app.get('/messageImages', (req, res) => {
 });
 
 app.get("/getUserInfos", async (req, res) => {
-  if (req.session.user) {
-    userData = await prisma.user.findFirst(
+  if (req.session.user || true) {
+    data = await prisma.user.findFirst(
       {
         where: {
-          name: req.session.user
+          name: "Test"
         },
         select:{
           chats: true
         }
       }
     )
-    console.log(userData);
+    test = await prisma.chat.findMany(
+      {
+        where: {
+          chatID: {in: data.chats.chatID}
+        },
+        include: {
+          users: {
+            select: {
+              name: true,
+              id: true
+            }
+          }
+        }
+      }
+    )
+    res.json(test);
+    res.end()
   }
   else {
     res.json({ "status": 0, "errorMessage": "Not logged in" });

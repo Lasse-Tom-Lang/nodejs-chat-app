@@ -178,9 +178,10 @@ fetch("/getUserInfos")
   .then(data => {
     userInfo = data;
     socket.emit("connected", data.name);
-    userInfo.chats.forEach(element => {
+    userInfo.forEach(element => {
+      user = 
       chatList.innerHTML += `
-        <button class="chat" onclick="setChat(${element.id}, 'chat');">
+        <button class="chat" onclick="setChat(${element.chatID}, 'chat');">
           <img src="profilePictures?user=${element.user.id}">
           <div class="online"></div>
           <a>
