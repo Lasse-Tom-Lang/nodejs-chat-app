@@ -178,18 +178,18 @@ fetch("/getUserInfos")
   .then(data => {
     userInfo = data;
     socket.emit("connected", data.name);
-    userInfo.forEach(element => {
-      user = 
+    data.chats.forEach(element => {
+      user = data.name == element.users[0].name?element.users[1]:element.users[0];
       chatList.innerHTML += `
         <button class="chat" onclick="setChat(${element.chatID}, 'chat');">
-          <img src="profilePictures?user=${element.user.id}">
+          <img src="profilePictures?user=${user.id}">
           <div class="online"></div>
           <a>
-            ${element.user.name}
+            ${user.name}
           </a>
         </button>
       `;
-      chatNameList.push(element.user.name);
+      chatNameList.push(user.name);
     });
     userInfo.groups.forEach(element => {
       chatList.innerHTML += `

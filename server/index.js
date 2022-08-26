@@ -34,7 +34,6 @@ async function test() {
       }
     }
   )
-  console.log(data)
   a = 0
   await data.chats.forEach(async chat => { 
     test = await prisma.chat.findUnique(
@@ -161,14 +160,16 @@ app.get('/messageImages', (req, res) => {
 });
 
 app.get("/getUserInfos", async (req, res) => {
-  if (req.session.user || true) {
+  if (req.session.user) {
     data = await prisma.user.findFirst(
       {
         where: {
-          name: "Test"
+          name: req.session.user
         },
         select:{
-          chats: true
+          chats: true,
+          name: true,
+          id: true
         }
       }
     )
@@ -187,8 +188,9 @@ app.get("/getUserInfos", async (req, res) => {
         }
       }
     )
-    res.json(test);
-    res.end()
+    data.chats = test;
+    res.json(data);
+    res.end();
   }
   else {
     res.json({ "status": 0, "errorMessage": "Not logged in" });
