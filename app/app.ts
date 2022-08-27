@@ -1,34 +1,60 @@
 const socket = io("ws://localhost:8080");
 
-connectedUsers = [];
+let connectedUsers = [];
 
-chat = undefined;
-chatInfo = undefined;
+interface chatInfo {
+  name: string,
+  id: string,
+  users: {
+    id: string
+    name: string
+  }[],
+  messages: {
+    id: string,
+    text: string,
+    type: "text" | "file" | "image" | "link",
+    user: {
+      name: string,
+      id: string
+    }
+  }[]
+}
 
-chatNameList = [];
+let chatInfo:chatInfo;
 
-textInput = document.getElementById("messageInput");
-chatList = document.getElementById("chatList");
-messageDiv = document.querySelector("main>div:nth-of-type(2)");
-chatImage = document.querySelector("#chatInfos img");
-chatName = document.querySelector("#chatInfos p");
-messages = document.getElementById("messages");
-messageTypeDiv = document.getElementById("messageTypeChoose");
-messageImageUpload = document.getElementById("messageImageUpload");
-messageFileUpload = document.getElementById("messageFileUpload");
-uploadInfo = document.getElementById("uploadInfo");
-messageLinkInput = document.getElementById("messageLinkInput");
-chatInfos = document.getElementById("chatInfos");
-groupInfos = document.getElementById("groupInfos");
-groupInfoImg = document.getElementById("groupInfoImg");
-groupInfoName = document.getElementById("groupInfoName");
-groupInfoUsers = document.getElementById("groupInfoUsers");
-groupInfoClose = document.getElementById("groupInfoClose");
-groupInfoLeave = document.getElementById("groupInfoLeave");
-imageMessagesIDs = [];
-fileMessagesIDs = [];
+let chat = undefined;
 
-messageType = "text";
+interface userInfo {
+  name: string,
+  id: string
+}
+
+let userInfo:userInfo;
+
+let chatNameList = [];
+
+let textInput = document.getElementById("messageInput") as HTMLInputElement;
+let chatList = document.getElementById("chatList")!;
+let messageDiv = document.querySelector("main>div:nth-of-type(2)") as HTMLDivElement;
+let chatImage = document.querySelector("#chatInfos img") as HTMLImageElement;
+let chatName = document.querySelector("#chatInfos p")!;
+let messages = document.getElementById("messages")!;
+let messageTypeDiv = document.getElementById("messageTypeChoose")!;
+let messageImageUpload = document.getElementById("messageImageUpload") as HTMLInputElement;
+let messageFileUpload = document.getElementById("messageFileUpload") as HTMLInputElement;
+let uploadInfo = document.getElementById("uploadInfo")!;
+let messageLinkInput = document.getElementById("messageLinkInput") as HTMLInputElement;
+let chatInfos = document.getElementById("chatInfos")!;
+let groupInfos = document.getElementById("groupInfos")!;
+let groupInfoImg = document.getElementById("groupInfoImg") as HTMLImageElement;
+let groupInfoName = document.getElementById("groupInfoName")!;
+let groupInfoUsers = document.getElementById("groupInfoUsers")!;
+let groupInfoClose = document.getElementById("groupInfoClose")!;
+let groupInfoLeave = document.getElementById("groupInfoLeave")!;
+let imageMessagesIDs = [];
+let fileMessagesIDs = [];
+
+let messageType: "text" | "file" | "image" | "link" = "text";
 
 chatInfos.addEventListener("click", () => {
   if (chat) {
@@ -74,11 +100,11 @@ function toggleMessageType() {
   }
 }
 
-document.getElementById("messageImageButton").addEventListener("click", () => {
+document.getElementById("messageImageButton")!.addEventListener("click", () => {
   messageImageUpload.click();
 });
 
-document.getElementById("messageFileButton").addEventListener("click", () => {
+document.getElementById("messageFileButton")!.addEventListener("click", () => {
   messageFileUpload.click();
 });
 
@@ -98,7 +124,7 @@ messageFileUpload.addEventListener("change", () => {
   messageType = "file";
 });
 
-document.getElementById("messageLinkButton").addEventListener("click", () => {
+document.getElementById("messageLinkButton")!.addEventListener("click", () => {
   messageTypeDiv.style.display = "none";
   uploadInfo.style.display = "none";
   messageLinkInput.style.display = "block";
@@ -130,7 +156,7 @@ function setChat(chatID, chatType) {
       }
       messages.innerHTML = "";
       chatInfo.messages.forEach(element => {
-        el = document.createElement("div");
+        var el = document.createElement("div") as HTMLElement;
         el.classList = element.user.id == userInfo.id ? "ownMessage" : "otherMessage";
         if (element.type == "image") {
           imageMessagesIDs.push(element.messageID);
@@ -172,14 +198,13 @@ window.onresize = function () {
   }
 }
 
-userInfo = "";
 fetch("/getUserInfos")
   .then(response => response.json())
   .then(data => {
     userInfo = data;
     socket.emit("connected", data.name);
     data.chats.forEach(element => {
-      user = data.name == element.users[0].name?element.users[1]:element.users[0];
+      let user = data.name == element.users[0].name?element.users[1]:element.users[0];
       chatList.innerHTML += `
         <button class="chat" onclick="setChat(${element.chatID}, 'chat');">
           <img src="profilePictures?user=${user.id}">
@@ -223,13 +248,13 @@ socket.on("message", message => {
   if (message.chat == chat) {
     switch (message.type) {
       case "text":
-        el = document.createElement("div");
+        var el = document.createElement("div");
         el.classList = "otherMessage";
         el.innerHTML = `<p>${message.text}</p><a>${message.user.name}</a>`;
         messages.appendChild(el);
         break;
       case "image":
-        el = document.createElement("div");
+        var el = document.createElement("div");
         el.classList = "otherMessage";
         el.innerHTML = "<div>"
         message.images.forEach(image => {
@@ -239,14 +264,14 @@ socket.on("message", message => {
         messages.appendChild(el);
         break;
       case "link":
-        el = document.createElement("div");
+        var el = document.createElement("div");
         el.classList = "otherMessage";
         el.innerHTML = `<a class='messageLink' href='${message.link}'>${message.link}</a>`;
         el.innerHTML += `<p>${message.text}</p><a>${message.user.name}</a>`;
         messages.appendChild(el);
         break;
       case "file":
-        el = document.createElement("div");
+        var el = document.createElement("div");
         el.classList = "otherMessage";
         el.innerHTML = `<a class='messageLink' href='${message.link}'>${message.link}</a>`;
         el.innerHTML = "<div class='fileList'>";
@@ -283,9 +308,9 @@ textInput.addEventListener("input", () => {
   }
 });
 
-document.getElementById("btn-send").addEventListener("click", () => {
+document.getElementById("btn-send")!.addEventListener("click", () => {
   if (textInput.value.trim().length != 0 && chatInfo && messageType == "text") {
-    text = textInput.value.replace(/</g, "&lt;");
+    var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
     socket.emit("message", { text: text, type: "text", user: {name: userInfo.name, id: userInfo.id}, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
@@ -299,25 +324,25 @@ document.getElementById("btn-send").addEventListener("click", () => {
     textInput.style.borderTopRightRadius = "0px";
   }
   else if (messageType == "image" && chatInfo) {
-    ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
+    var ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
     while (imageMessagesIDs.includes(ID)) {
       ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
     }
-    imageList = [];
-    for (i = 0; i < messageImageUpload.files.length; i++) {
+    let imageList = [];
+    for (var i = 0; i < messageImageUpload.files.length; i++) {
       if (["png", "jpeg", "jpg"].includes(messageImageUpload.files[i].name.split(".")[1].toLowerCase())) {
         imageList.push(messageImageUpload.files[i].name);
-        xml = new XMLHttpRequest();
+        var xml = new XMLHttpRequest();
         xml.open('POST', '/uploadImage', true);
-        formdata = new FormData();
+        var formdata = new FormData();
         formdata.append("myFile", messageImageUpload.files[i]);
         formdata.append("chatID", chat);
-        formdata.append("messageID", ID);
+        formdata.append("messageID", ID.toString());
         xml.send(formdata);
       }
     };
     imageMessagesIDs.push(ID);
-    text = textInput.value.replace(/</g, "&lt;");
+    var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
     textInput.value = "";
@@ -330,7 +355,7 @@ document.getElementById("btn-send").addEventListener("click", () => {
     messageType = "text";
     setTimeout(() => {
       socket.emit("message", { text: text, type: "image", messageID: ID, images: imageList, user: {name: userInfo.name, id: userInfo.id}, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
-      el = document.createElement("div");
+      var el = document.createElement("div");
       el.classList = "ownMessage";
       el.innerHTML = "<div>"
       imageList.forEach(image => {
@@ -341,11 +366,11 @@ document.getElementById("btn-send").addEventListener("click", () => {
     }, imageList.length * 250);
   }
   else if (messageType == "link" && chatInfo && messageLinkInput.value.trim().length != 0) {
-    text = textInput.value.replace(/</g, "&lt;");
+    var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
     socket.emit("message", { text: text, type: "link", link: messageLinkInput.value, user: {name: userInfo.name, id: userInfo.id}, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
-    el = document.createElement("div");
+    var el = document.createElement("div");
     el.classList = "ownMessage";
     el.innerHTML = `<a class='messageLink' href='${messageLinkInput.value}'>${messageLinkInput.value}</a>`;
     el.innerHTML += `<p>${text}</p><a>${userInfo.name}</a>`;
@@ -360,23 +385,23 @@ document.getElementById("btn-send").addEventListener("click", () => {
     messageType = "text";
   }
   else if (messageType == "file" && chatInfo) {
-    ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
+    var ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
     while (fileMessagesIDs.includes(ID)) {
       ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
     }
-    fileList = [];
+    var fileList = [];
     for (i = 0; i < messageFileUpload.files.length; i++) {
       fileList.push(messageFileUpload.files[i].name);
-      xml = new XMLHttpRequest();
+      var xml = new XMLHttpRequest();
       xml.open('POST', '/uploadFile', true);
-      formdata = new FormData();
+      var formdata = new FormData();
       formdata.append("myFile", messageFileUpload.files[i]);
       formdata.append("chatID", chat);
-      formdata.append("messageID", ID);
+      formdata.append("messageID", ID.toString());
       xml.send(formdata);
     };
     fileMessagesIDs.push(ID);
-    text = textInput.value.replace(/</g, "&lt;");
+    var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
     textInput.value = "";
@@ -388,7 +413,7 @@ document.getElementById("btn-send").addEventListener("click", () => {
     messageFileUpload.value = null;
     messageType = "text";
     socket.emit("message", { text: text, type: "file", messageID: ID, files: fileList, user: {name: userInfo.name, id: userInfo.id}, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
-    el = document.createElement("div");
+    var el = document.createElement("div");
     el.classList = "ownMessage";
     el.innerHTML = "<div class='fileList'>";
     fileList.forEach(file => {

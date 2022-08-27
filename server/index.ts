@@ -24,7 +24,7 @@ async function test() {
   //   }
   // })
   // console.log(data)
-  data = await prisma.user.findFirst(
+  var data = await prisma.user.findFirst(
     {
       where: {
         name: {in: ["Test", "User"]}
@@ -34,7 +34,7 @@ async function test() {
       }
     }
   )
-  a = 0
+  var a = 0
   await data.chats.forEach(async chat => { 
     test = await prisma.chat.findUnique(
       {
