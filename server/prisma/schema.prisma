@@ -21,16 +21,22 @@ model User {
 model Chat {
   chatID String @id @default(uuid())
   users User[]
+  messages Message[]
 }
 
 model Group {
   groupID String @id @default(uuid())
   name String
   users User[]
+  messages Message[]
 }
 
 model Message {
   messageID String @id @default(uuid())
+  groupID String?
+  chatID String?
+  chat Chat? @relation(fields: [chatID], references: [chatID])
+  group Group? @relation(fields: [groupID], references: [groupID])
   type String
   text String?
   sendedAt DateTime @updatedAt
@@ -40,6 +46,8 @@ model Message {
 }
 
 model messageFile {
-  name String @id
-  message Message @relation(fields: [name], references: [messageID])
+  id String @id @default(uuid())
+  name String
+  messageID String
+  message Message @relation(fields: [messageID], references: [messageID])
 }

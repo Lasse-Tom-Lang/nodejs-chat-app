@@ -216,10 +216,10 @@ fetch("/getUserInfos")
       `;
       chatNameList.push(user.name);
     });
-    userInfo.groups.forEach(element => {
+    data.groups.forEach(element => {
       chatList.innerHTML += `
-        <button class="chat" onclick="setChat(${element.id}, 'group');">
-          <img src="profilePictures?user=${element.id}">
+        <button class="chat" onclick="setChat(${element.groupID}, 'group');">
+          <img src="profilePictures?user=${element.groupID}">
           <a>
             ${element.name}
           </a>

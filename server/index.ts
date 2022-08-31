@@ -1,80 +1,26 @@
-const fs = require('fs');
+import fs from 'fs';
 
 // Setup server
-const http = require('http');
-const express = require('express');
-const app = express();
-const cookieParser = require("cookie-parser");
-const fileUpload = require('express-fileupload');
-const sessions = require('express-session');
+import http from 'http';
+import express, { Express, Request, Response } from 'express';
+const app: Express = express();
+import cookieParser from "cookie-parser";
+import fileUpload from 'express-fileupload';
+import sessions, { Session } from 'express-session';
 const oneDay = 86400000;
 var server = http.createServer(app);
+import { Socket } from 'socket.io';
 var io = require('socket.io')(server);
 server.listen(8080);
 
 // Loding user data
 
-const {PrismaClient} = require("@prisma/client");
-const prisma = new PrismaClient()
+import { PrismaClient } from "@prisma/client";
+const prisma: PrismaClient = new PrismaClient();
 
-async function test() {
-  // data = await prisma.chat.create({
-  //   data: {
-  //     users: {connect: [{name: "Test"}]},
-  //   }
-  // })
-  // console.log(data)
-  var data = await prisma.user.findFirst(
-    {
-      where: {
-        name: {in: ["Test", "User"]}
-      },
-      select:{
-        chats: true
-      }
-    }
-  )
-  var a = 0
-  await data.chats.forEach(async chat => { 
-    test = await prisma.chat.findUnique(
-      {
-        where: {
-          chatID: chat.chatID
-        },
-        include: {
-          users: {
-            select: {
-              name: true
-            }
-          }
-        }
-      }
-    )
-    data.chats[a] = Object.assign(data.chats[a], test)
-    a++
-  });
-  // data = await prisma.user.update(
-  //   {
-  //     where: {name: "Test"},
-  //     data: {
-  //       chats: {connect: [{chatID: '9d997e39-64c5-4a8c-8f2f-00a13bc02275'}]}
-  //     }
-  //   }
-  // )
-}
-test()
-
-usersInfo = JSON.parse(fs.readFileSync('data/users.json')).users;
-chatInfo = JSON.parse(fs.readFileSync('data/chats.json'))
-
-/**
- * @param {string} user Username to check
- * @param {string} password Password to check
- * @return {string} Gives back if login is correct
- */
-async function testLogin(user, password) {
+async function testLogin(user: string, password: string) {
   if (user && password) {
-    userData = await prisma.user.findFirst({
+    let userData = await prisma.user.findFirst({
       where: {
         name: user,
         password: password
@@ -140,8 +86,13 @@ app.get('/app.js', (req, res) => {
   res.end();
 });
 
-app.get('/userauthentification', async (req, res) => {
-  answer = await testLogin(req.query.user, req.query.password);
+interface userAuthentificationQuery {
+  user: string
+  password: string
+}
+
+app.get('/userauthentification', async (req: Request<"", "", "", userAuthentificationQuery>, res) => {
+  let answer = await testLogin(req.query.user, req.query.password);
   if (answer.status == 1) {
     req.session.user = req.query.user;
   }
@@ -161,22 +112,23 @@ app.get('/messageImages', (req, res) => {
 
 app.get("/getUserInfos", async (req, res) => {
   if (req.session.user) {
-    data = await prisma.user.findFirst(
+    let data = await prisma.user.findFirst(
       {
         where: {
           name: req.session.user
         },
-        select:{
+        select: {
           chats: true,
+          groups: true,
           name: true,
           id: true
         }
       }
-    )
-    test = await prisma.chat.findMany(
+    );
+    let chatUsers = await prisma.chat.findMany(
       {
         where: {
-          chatID: {in: data.chats.chatID}
+          chatID: { in: data.chats.chatID }
         },
         include: {
           users: {
@@ -187,8 +139,24 @@ app.get("/getUserInfos", async (req, res) => {
           }
         }
       }
-    )
-    data.chats = test;
+    );
+    let groupUsers = await prisma.group.findMany(
+      {
+        where: {
+          groupID: { in: data?.groups.groupID }
+        },
+        include: {
+          users: {
+            select: {
+              name: true,
+              id: true
+            }
+          }
+        }
+      }
+    );
+    data.chats = chatUsers;
+    data.groups = groupUsers;
     res.json(data);
     res.end();
   }
@@ -202,18 +170,26 @@ app.get("/getChat", (req, res) => {
   if (req.session.user) {
     if (req.query.chatID && req.query.chatType) {
       if (req.query.chatType == "chat") {
-        chatInfo.chats.forEach(element => {
-          if (element.id == req.query.chatID) {
-            element.users.forEach(elementUser => {
-              if (elementUser.name == req.session.user) {
-                res.json(element);
-                res.end();
-                return;
+        (
+          async () => {
+            let data = await prisma.chat.findFirst({
+              where: {
+                chatID: req.query.chatID
+              },
+              include: {
+                users: {
+                  select: {
+                    id: true,
+                    name: true
+                  }
+                },
+                messages: true
               }
-            });
-            return;
+            })
+            res.json(data)
+            res.end()
           }
-        });
+        )();
       }
       if (req.query.chatType == "group") {
         chatIndex = chatInfo.groups.map((a) => { return a.id; }).indexOf(parseInt(req.query.chatID));
@@ -249,8 +225,8 @@ app.post("/uploadImage", (req, res) => {
 });
 
 app.post("/uploadFile", (req, res) => {
-  file = req.files.myFile;
-  path = __dirname + `/data/Uploads/Files/${req.body.chatID}/${req.body.messageID}`;
+  let file = req.files.myFile;
+  let path = __dirname + `/data/Uploads/Files/${req.body.chatID}/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${file.name}`, (err) => {
     if (err) {
@@ -261,10 +237,10 @@ app.post("/uploadFile", (req, res) => {
 });
 
 app.post("/changeProfilePicture", (req, res) => {
-  file = req.files.myFile;
-  path = __dirname + "/data/userImages/";
+  let file = req.files.myFile;
+  let path = __dirname + "/data/userImages/";
   usersInfo.forEach(element => {
-    if (element.name == req.session.user) userID =  element.id; return
+    if (element.name == req.session.user) userID = element.id; return
   })
   file.mv(path + userID + ".png", (err) => {
     if (err) {
@@ -282,16 +258,16 @@ app.use("/fileDownload/:fileName", (req, res) => {
 
 // Setup socket.io
 
-const users = {};
+let users:{[key: string]:string } = {};
 
-io.on("connection", (socket) => {
-  socket.on("connected", (user) => {
+io.on("connection", (socket: Socket) => {
+  socket.on("connected", (user:string) => {
     users[user] = socket.id;
     io.emit("connected", Object.keys(users));
   });
 
   socket.on("disconnect", () => {
-    userName = Object.keys(users).find(key => users[key] === socket.id);
+    let userName:string = Object.keys(users).find(key => users[key] === socket.id)!;
     delete users[userName];
     io.emit("disconnected", (userName));
   })
@@ -299,7 +275,7 @@ io.on("connection", (socket) => {
   socket.on("message", (message) => {
     chatInfo.chats.forEach((element, count) => {
       if (element.id == message.chat) {
-        newMessage = {type: message.type, text: message.text, date: new Date(), user: message.user};
+        var newMessage = { type: message.type, text: message.text, date: new Date(), user: message.user };
         if (message.type != "text") {
           newMessage.messageID = message.messageID;
           switch (message.type) {
@@ -320,7 +296,7 @@ io.on("connection", (socket) => {
     });
     chatInfo.groups.forEach((element, count) => {
       if (element.id == message.chat) {
-        newMessage = {type: message.type, text: message.text, date: new Date(), user: message.user};
+        var newMessage = { type: message.type, text: message.text, date: new Date(), user: message.user };
         if (message.type != "text") {
           newMessage.messageID = message.messageID;
           switch (message.type) {
