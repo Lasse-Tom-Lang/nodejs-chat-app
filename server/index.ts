@@ -183,7 +183,11 @@ app.get("/getChat", (req, res) => {
                     name: true
                   }
                 },
-                messages: true
+                messages: {
+                  include: {
+                    messageFiles: true
+                  }
+                }
               }
             })
             res.json(data)
@@ -192,13 +196,30 @@ app.get("/getChat", (req, res) => {
         )();
       }
       if (req.query.chatType == "group") {
-        chatIndex = chatInfo.groups.map((a) => { return a.id; }).indexOf(parseInt(req.query.chatID));
-        if (chatIndex != -1) {
-          if (chatInfo.groups[chatIndex].users.map((a) => { return a.name; }).includes(req.session.user)) {
-            res.json(chatInfo.groups[chatIndex]);
-            res.end();
+        (
+          async () => {
+            let data = await prisma.group.findFirst({
+              where: {
+                groupID: req.query.chatID
+              },
+              include: {
+                users: {
+                  select: {
+                    id: true,
+                    name: true
+                  }
+                },
+                messages: {
+                  include: {
+                    messageFiles: true
+                  }
+                }
+              }
+            })
+            res.json(data)
+            res.end()
           }
-        }
+        )();
       }
     }
     else {

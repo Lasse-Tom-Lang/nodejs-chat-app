@@ -150,19 +150,19 @@ function setChat(chatID, chatType) {
         }
       }
       else if (chatType == "group") {
-        chatImage.src = `profilePictures?user=${chatInfo.id}`;
+        chatImage.src = `profilePictures?user=${chatInfo.groupID}`;
         chatImage.style.display = "inline";
         chatName.innerHTML = chatInfo.name;
       }
       messages.innerHTML = "";
       chatInfo.messages.forEach(element => {
         var el = document.createElement("div") as HTMLElement;
-        el.classList = element.user.id == userInfo.id ? "ownMessage" : "otherMessage";
+        el.classList = element.userName == userInfo.name ? "ownMessage" : "otherMessage";
         if (element.type == "image") {
           imageMessagesIDs.push(element.messageID);
           el.innerHTML = "<div>";
-          element.images.forEach(image => {
-            el.firstChild.innerHTML += `<img src='/messageImages?chatID=${chatID}&messageID=${element.messageID}&imageName=${image}'>`;
+          element.messageFiles.forEach(image => {
+            el.firstChild.innerHTML += `<img src='/messageImages?chatID=${chatID}&messageID=${element.messageID}&imageName=${image.name}'>`;
           });
         }
         if (element.type == "link") {
@@ -175,7 +175,7 @@ function setChat(chatID, chatType) {
             el.firstChild.innerHTML += `<a href='fileDownload/${file}?chatID=${chatID}&messageID=${element.id}' download>${file}</a>`;
           });
         }
-        el.innerHTML += `<p>${element.text}</p><a>${element.user.name}</a>`;
+        el.innerHTML += `<p>${element.text}</p><a>${element.userName}</a>`;
         messages.appendChild(el);
       });
     });
@@ -206,7 +206,7 @@ fetch("/getUserInfos")
     data.chats.forEach(element => {
       let user = data.name == element.users[0].name?element.users[1]:element.users[0];
       chatList.innerHTML += `
-        <button class="chat" onclick="setChat(${element.chatID}, 'chat');">
+        <button class="chat" onclick="setChat('${element.chatID}', 'chat');">
           <img src="profilePictures?user=${user.id}">
           <div class="online"></div>
           <a>
@@ -218,7 +218,7 @@ fetch("/getUserInfos")
     });
     data.groups.forEach(element => {
       chatList.innerHTML += `
-        <button class="chat" onclick="setChat(${element.groupID}, 'group');">
+        <button class="chat" onclick="setChat('${element.groupID}', 'group');">
           <img src="profilePictures?user=${element.groupID}">
           <a>
             ${element.name}
