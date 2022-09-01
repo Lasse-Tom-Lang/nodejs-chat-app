@@ -5,3 +5,5 @@ Images
 Files
 .env
 migrations
+app.js
+index.js

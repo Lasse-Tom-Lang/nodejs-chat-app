@@ -2,9 +2,8 @@ import fs from 'fs';
 
 // Setup server
 import http from 'http';
-import express, { Express, Request, Response } from 'express';
+import express, { Express, Request } from 'express';
 const app: Express = express();
-import cookieParser from "cookie-parser";
 import fileUpload from 'express-fileupload';
 import sessions, { Session } from 'express-session';
 const oneDay = 86400000;
@@ -40,14 +39,20 @@ async function testLogin(user: string, password: string) {
 
 // Setup sessions
 
+declare global {
+  namespace Express {
+    interface Session {
+      user: string
+    }
+  }
+}
+
 app.use(sessions({
   secret: ".f2.97rrh34?r318b24!82rb",
   saveUninitialized: true,
   cookie: { maxAge: oneDay },
   resave: false
 }));
-
-app.use(cookieParser());
 
 // Setup pages
 
@@ -56,7 +61,7 @@ app.use(
 );
 
 app.get('/', (req, res) => {
-  if (req.session.user) {
+  if (req.session!.user) {
     res.write(fs.readFileSync("../app/index.html"));
     res.end();
   }
@@ -67,7 +72,7 @@ app.get('/', (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
-  if (req.session.user) {
+  if (req.session!.user) {
     res.write(fs.readFileSync("../app/profile.html"));
     res.end();
   }
@@ -94,7 +99,7 @@ interface userAuthentificationQuery {
 app.get('/userauthentification', async (req: Request<"", "", "", userAuthentificationQuery>, res) => {
   let answer = await testLogin(req.query.user, req.query.password);
   if (answer.status == 1) {
-    req.session.user = req.query.user;
+    req.session!.user = req.query.user;
   }
   res.json(answer);
   res.end();
@@ -111,11 +116,11 @@ app.get('/messageImages', (req, res) => {
 });
 
 app.get("/getUserInfos", async (req, res) => {
-  if (req.session.user) {
+  if (req.session!.user) {
     let data = await prisma.user.findFirst(
       {
         where: {
-          name: req.session.user
+          name: req.session!.user
         },
         select: {
           chats: true,
@@ -128,7 +133,7 @@ app.get("/getUserInfos", async (req, res) => {
     let chatUsers = await prisma.chat.findMany(
       {
         where: {
-          chatID: { in: data.chats.chatID }
+          chatID: { in: data!.chats.chatID }
         },
         include: {
           users: {
@@ -155,8 +160,8 @@ app.get("/getUserInfos", async (req, res) => {
         }
       }
     );
-    data.chats = chatUsers;
-    data.groups = groupUsers;
+    data!.chats = chatUsers;
+    data!.groups = groupUsers;
     res.json(data);
     res.end();
   }
@@ -166,8 +171,13 @@ app.get("/getUserInfos", async (req, res) => {
   }
 });
 
-app.get("/getChat", (req, res) => {
-  if (req.session.user) {
+interface getChatQuery {
+  chatID: string,
+  chatType: "group" | "chat"
+}
+
+app.get("/getChat", (req: Request<"", "", "", getChatQuery>, res) => {
+  if (req.session!.user) {
     if (req.query.chatID && req.query.chatType) {
       if (req.query.chatType == "chat") {
         (
@@ -234,10 +244,10 @@ app.get("/getChat", (req, res) => {
 });
 
 app.post("/uploadImage", (req, res) => {
-  file = req.files.myFile;
-  path = __dirname + `/data/Uploads/Images/${req.body.chatID}/${req.body.messageID}`;
+  let file = req.files!.myFile;
+  let path = __dirname + `/data/Uploads/Images/${req.body.chatID}/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
-  file.mv(`${path}/${file.name}`, (err) => {
+  file.mv(`${path}/${file.name}`, (err:Error) => {
     if (err) {
       return res.send({ "status": 0, "errorMessage": "Something went wrong" });
     }
@@ -249,7 +259,7 @@ app.post("/uploadFile", (req, res) => {
   let file = req.files.myFile;
   let path = __dirname + `/data/Uploads/Files/${req.body.chatID}/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
-  file.mv(`${path}/${file.name}`, (err) => {
+  file.mv(`${path}/${file.name}`, (err:Error) => {
     if (err) {
       return res.send({ "status": 0, "errorMessage": "Something went wrong" });
     }
@@ -260,10 +270,13 @@ app.post("/uploadFile", (req, res) => {
 app.post("/changeProfilePicture", (req, res) => {
   let file = req.files.myFile;
   let path = __dirname + "/data/userImages/";
+  let userID:string;
   usersInfo.forEach(element => {
-    if (element.name == req.session.user) userID = element.id; return
+    if (element.name == req.session.user)  {
+      userID = element.id; return
+    }
   })
-  file.mv(path + userID + ".png", (err) => {
+  file.mv(path + userID + ".png", (err:Error) => {
     if (err) {
       return res.send({ "status": 0, "errorMessage": "Something went wrong" });
     }
@@ -281,6 +294,10 @@ app.use("/fileDownload/:fileName", (req, res) => {
 
 let users:{[key: string]:string } = {};
 
+interface socketMessage {
+  sendTo: string[]
+}
+
 io.on("connection", (socket: Socket) => {
   socket.on("connected", (user:string) => {
     users[user] = socket.id;
@@ -293,49 +310,7 @@ io.on("connection", (socket: Socket) => {
     io.emit("disconnected", (userName));
   })
 
-  socket.on("message", (message) => {
-    chatInfo.chats.forEach((element, count) => {
-      if (element.id == message.chat) {
-        var newMessage = { type: message.type, text: message.text, date: new Date(), user: message.user };
-        if (message.type != "text") {
-          newMessage.messageID = message.messageID;
-          switch (message.type) {
-            case "link":
-              newMessage.link = message.link;
-              break;
-            case "file":
-              newMessage.files = message.files;
-              break;
-            case "image":
-              newMessage.images = message.images;
-              break;
-          }
-        }
-        chatInfo.chats[count].messages.push(newMessage);
-        return;
-      }
-    });
-    chatInfo.groups.forEach((element, count) => {
-      if (element.id == message.chat) {
-        var newMessage = { type: message.type, text: message.text, date: new Date(), user: message.user };
-        if (message.type != "text") {
-          newMessage.messageID = message.messageID;
-          switch (message.type) {
-            case "link":
-              newMessage.link = message.link;
-              break;
-            case "file":
-              newMessage.files = message.files;
-              break;
-            case "image":
-              newMessage.images = message.images;
-              break;
-          }
-        }
-        chatInfo.groups[count].messages.push(newMessage);
-        return;
-      }
-    });
+  socket.on("message", (message:socketMessage) => {
     message.sendTo.forEach(element => {
       if (users[element]) {
         socket.broadcast.to(users[element]).emit("message", message);

@@ -60,7 +60,7 @@ chatInfos.addEventListener("click", () => {
     groupInfos.style.display = "flex";
     groupInfoUsers.innerHTML = "";
     if (chatInfo.name) {
-      groupInfoImg.src = `profilePictures?user=${chatInfo.id}`;
+      groupInfoImg.src = `profilePictures?user=${chatInfo.groupID}`;
       groupInfoName.innerHTML = chatInfo.name;
       chatInfo.users.forEach(element => {
         if (element.id == userInfo.id) {
@@ -394,7 +394,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     socket.emit("message", { text: text, type: "file", messageID: ID, files: fileList, user: { name: userInfo.name, id: userInfo.id }, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
     var el = document.createElement("div");
     el.setAttribute("class", "ownMessage");
-    el.appendChild(document.createElement("div"))
+    el.appendChild(document.createElement("div"));
     fileList.forEach(file => {
       el.firstChild!.innerHTML += `<a href='fileDownload/${file}?chatID=${chat}&messageID=${ID}' download>${file}</a>`;
     });
