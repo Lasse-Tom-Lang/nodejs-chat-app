@@ -14,6 +14,7 @@ interface chatInfo {
     type: "text" | "file" | "image" | "link",
     userName: string,
     link: string,
+    sendedAt: Date,
     messageFiles: {
       name: string,
       id: string
@@ -224,6 +225,13 @@ function setChat(chatID, chatLoadType) {
         chatName.innerHTML = chatInfo.name;
       }
       messages.innerHTML = "";
+      console.log(chatInfo.messages)
+      chatInfo.messages.sort((a, b) => {
+        a.sendedAt = new Date(a.sendedAt);
+        b.sendedAt = new Date(b.sendedAt)
+        return a.sendedAt.getTime() - b.sendedAt.getTime();
+      });
+      console.log(chatInfo.messages)
       chatInfo.messages.forEach(element => {
         renderMessage(chatID, element.userName, element.type, element.messageID, element.messageFiles, element.link, element.text)
       });

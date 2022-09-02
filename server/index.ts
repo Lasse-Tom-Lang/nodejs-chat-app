@@ -5,7 +5,7 @@ import http from 'http';
 import express, { Express, Request } from 'express';
 const app: Express = express();
 import fileUpload from 'express-fileupload';
-import sessions, { Session } from 'express-session';
+import sessions from 'express-session';
 const oneDay = 86400000;
 var server = http.createServer(app);
 import { Socket } from 'socket.io';
@@ -199,9 +199,9 @@ app.get("/getChat", (req: Request<"", "", "", getChatQuery>, res) => {
                   }
                 }
               }
-            })
-            res.json(data)
-            res.end()
+            });
+            res.json(data);
+            res.end();
           }
         )();
       }
