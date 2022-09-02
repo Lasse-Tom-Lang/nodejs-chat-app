@@ -13,8 +13,8 @@ interface chatInfo {
     text: string,
     type: "text" | "file" | "image" | "link",
     userName: string,
-    link?: string,
-    messageFiles?: {
+    link: string,
+    messageFiles: {
       name: string,
       id: string
     }[]
@@ -54,6 +54,74 @@ let groupInfoClose = document.getElementById("groupInfoClose") as HTMLButtonElem
 let groupInfoLeave = document.getElementById("groupInfoLeave") as HTMLButtonElement;
 
 let messageType: "text" | "file" | "image" | "link" = "text";
+
+function renderMessage(chatID, userName:string, type: "text" | "file" | "image" | "link", messageID: string, messageFiles: {name: string, id: string}[], link: string, text:string) {
+  if (type == "text") {
+    let newMessage = `
+      <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
+        <p>
+          ${text}
+        </p>
+        <a>
+          ${userName}
+        </a>
+      </div>
+    `;
+    messages.innerHTML += newMessage;
+  }
+  if (type == "image") {
+    let images = "";
+    messageFiles.forEach(image => {
+      images += `<img src='/messageImages?chatID=${chatID}&messageID=${messageID}&imageName=${image.name}'>`;
+    });
+    let newMessage = `
+      <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
+        ${images}
+        <p>
+          ${text}
+        </p>
+        <a>
+          ${userName}
+        </a>
+      </div>
+    `;
+    messages.innerHTML += newMessage;
+  }
+  if (type == "link") {
+    let newMessage = `
+      <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
+        <a class='messageLink' href='${link}'>
+          ${link}
+        </a>
+        <p>
+          ${text}
+        </p>
+        <a>
+          ${userName}
+        </a>
+      </div>
+    `;
+    messages.innerHTML += newMessage;
+  }
+  if (type == "file") {
+    let files = "";
+    messageFiles.forEach(file => {
+      files += `<a href='fileDownload/${file.id}?chatID=${chatID}&messageID=${messageID}' download>${file.name}</a>`;
+    });
+    let newMessage = `
+      <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
+        ${files}
+        <p>
+          ${text}
+        </p>
+        <a>
+          ${userName}
+        </a>
+      </div>
+    `;
+    messages.innerHTML += newMessage;
+  }
+}
 
 chatInfos.addEventListener("click", () => {
   if (chat) {
@@ -155,25 +223,7 @@ function setChat(chatID, chatType) {
       }
       messages.innerHTML = "";
       chatInfo.messages.forEach(element => {
-        var el = document.createElement("div") as HTMLDivElement;
-        el.setAttribute("class", element.userName == userInfo.name ? "ownMessage" : "otherMessage");
-        if (element.type == "image") {
-          el.appendChild(document.createElement("div"));
-          element.messageFiles!.forEach(image => {
-            el.firstChild!.innerHTML += `<img src='/messageImages?chatID=${chatID}&messageID=${element.messageID}&imageName=${image.name}'>`;
-          });
-        }
-        if (element.type == "link") {
-          el.innerHTML = `<a class='messageLink' href='${element.link}'>${element.link}</a>`;
-        }
-        if (element.type == "file") {
-          el.innerHTML = "<div class='fileList'>";
-          element.messageFiles!.forEach(file => {
-            el.firstChild!.innerHTML += `<a href='fileDownload/${file.id}?chatID=${chatID}&messageID=${element.messageID}' download>${file.name}</a>`;
-          });
-        }
-        el.innerHTML += `<p>${element.text}</p><a>${element.userName}</a>`;
-        messages.appendChild(el);
+        renderMessage(chatID, element.userName, element.type, element.messageID, element.messageFiles, element.link, element.text)
       });
     });
   if (window.innerWidth <= 800 && chat) {
@@ -239,30 +289,22 @@ socket.on("disconnected", (user:string) => {
   }
 });
 
-socket.on("message", message => {
+interface socketMessage {
+  messageID: string,
+  text: string,
+  type: "text" | "file" | "image" | "link",
+  userName: string,
+  link: string,
+  messageFiles: {
+    name: string,
+    id: string
+  }[],
+  chat: string
+}
+
+socket.on("message", (message:socketMessage) => {
   if (message.chat == chat) {
-    var el = document.createElement("div");
-    el.setAttribute("class", "otherMessage");
-    switch (message.type) {
-      case "image":
-        el.innerHTML = "<div>"
-        message.images.forEach(image => {
-          el.firstChild!.innerHTML += `<img src='/messageImages?chatID=${chat}&messageID=${message.messageID}&imageName=${image}'>`;
-        });
-        break;
-      case "link":
-        el.innerHTML = `<a class='messageLink' href='${message.link}'>${message.link}</a>`;
-        break;
-      case "file":
-        el.innerHTML = `<a class='messageLink' href='${message.link}'>${message.link}</a>`;
-        el.innerHTML = "<div class='fileList'>";
-        message.files.forEach(file => {
-          el.firstChild!.innerHTML += `<a href='fileDownload/${file}?chatID=${chat}&messageID=${message.messageID}' download>${file}</a>`;
-        });
-        break;
-    }
-    el.innerHTML += `<p>${message.text}</p><a>${message.user.name}</a>`;
-    messages.appendChild(el);
+    renderMessage(message.chat, message.userName, message.type, message.messageID, message.messageFiles, message.link, message.text);
   }
 });
 
@@ -294,7 +336,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
-    socket.emit("message", { text: text, type: "text", user: { name: userInfo.name, id: userInfo.id }, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+    socket.emit("message", { text: text, type: "text", userName: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
     el = document.createElement("div");
     el.setAttribute("class", "ownMessage");
     el.innerHTML = "<p>" + text + "</p><a>" + userInfo.name + "</a>";
