@@ -401,12 +401,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
-    socket.emit("message", { text: text, type: "link", link: messageLinkInput.value, user: { name: userInfo.name, id: userInfo.id }, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
-    var el = document.createElement("div");
-    el.setAttribute("class", "ownMessage");
-    el.innerHTML = `<a class='messageLink' href='${messageLinkInput.value}'>${messageLinkInput.value}</a>`;
-    el.innerHTML += `<p>${text}</p><a>${userInfo.name}</a>`;
-    messages.appendChild(el);
+    socket.emit("message",{ text: text, type: "link", link: messageLinkInput.value, userName: userInfo.name, chatType: chatType, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
     textInput.value = "";
     textInput.style.height = "30px";
     textInput.style.borderTopLeftRadius = "0px";

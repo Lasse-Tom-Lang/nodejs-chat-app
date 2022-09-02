@@ -256,7 +256,7 @@ app.post("/uploadImage", (req, res) => {
 });
 
 app.post("/uploadFile", (req, res) => {
-  let file = req.files.myFile;
+  let file = req.files!.myFile;
   let path = __dirname + `/data/Uploads/Files/${req.body.chatID}/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${file.name}`, (err:Error) => {
@@ -268,7 +268,7 @@ app.post("/uploadFile", (req, res) => {
 });
 
 app.post("/changeProfilePicture", (req, res) => {
-  let file = req.files.myFile;
+  let file = req.files!.myFile;
   let path = __dirname + "/data/userImages/";
   let userID:string;
   usersInfo.forEach(element => {
@@ -341,6 +341,30 @@ io.on("connection", (socket: Socket) => {
             type: message.type,
             text: message.text,
             userName: message.userName
+          }
+        })
+      }
+    }
+    if (message.type == "link") {
+      if (message.chatType == "chat") {
+        newMessage = await prisma.message.create({
+          data: {
+            chatID: message.chat,
+            type: message.type,
+            text: message.text,
+            userName: message.userName,
+            link: message.link
+          }
+        })
+      }
+      if (message.chatType == "group") {
+        newMessage = await prisma.message.create({
+          data: {
+            groupID: message.chat,
+            type: message.type,
+            text: message.text,
+            userName: message.userName,
+            link: message.link
           }
         })
       }
