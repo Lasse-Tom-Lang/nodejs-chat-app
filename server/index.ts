@@ -9,7 +9,7 @@ import sessions, { Session } from 'express-session';
 const oneDay = 86400000;
 var server = http.createServer(app);
 import { Socket } from 'socket.io';
-var io = require('socket.io')(server);
+var io:Socket = require('socket.io')(server);
 server.listen(8080);
 
 // Loding user data
@@ -295,7 +295,18 @@ app.use("/fileDownload/:fileName", (req, res) => {
 let users:{[key: string]:string } = {};
 
 interface socketMessage {
-  sendTo: string[]
+  sendTo: string[],
+  messageID: string,
+  text: string,
+  type: "text" | "file" | "image" | "link",
+  chatType: "chat" | "group",
+  chat: string,
+  userName: string,
+  link: string,
+  messageFiles: {
+    name: string,
+    id: string
+  }[]
 }
 
 io.on("connection", (socket: Socket) => {
@@ -310,10 +321,33 @@ io.on("connection", (socket: Socket) => {
     io.emit("disconnected", (userName));
   })
 
-  socket.on("message", (message:socketMessage) => {
+  socket.on("message", async (message:socketMessage) => {
+    let newMessage = {};
+    if (message.type == "text") {
+      if (message.chatType == "chat") {
+        newMessage = await prisma.message.create({
+          data: {
+            chatID: message.chat,
+            type: message.type,
+            text: message.text,
+            userName: message.userName
+          }
+        })
+      }
+      if (message.chatType == "group") {
+        newMessage = await prisma.message.create({
+          data: {
+            groupID: message.chat,
+            type: message.type,
+            text: message.text,
+            userName: message.userName
+          }
+        })
+      }
+    }
     message.sendTo.forEach(element => {
       if (users[element]) {
-        socket.broadcast.to(users[element]).emit("message", message);
+        io.to(users[element]).emit("message", newMessage);
       }
     });
   });

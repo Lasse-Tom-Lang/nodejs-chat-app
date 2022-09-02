@@ -23,7 +23,8 @@ interface chatInfo {
 
 let chatInfo: chatInfo;
 
-let chat:string = "";
+let chat:string;
+let chatType: "chat" | "group";
 
 interface userInfo {
   name: string,
@@ -198,7 +199,8 @@ document.getElementById("messageLinkButton")!.addEventListener("click", () => {
   messageType = "link";
 });
 
-function setChat(chatID, chatType) {
+function setChat(chatID, chatLoadType) {
+  chatType = chatLoadType;
   chat = chatID;
   fetch(`/getChat?chatID=${chatID}&chatType=${chatType}`)
     .then(response => response.json())
@@ -299,12 +301,16 @@ interface socketMessage {
     name: string,
     id: string
   }[],
-  chat: string
+  chatID: string,
+  groupID: string
 }
 
 socket.on("message", (message:socketMessage) => {
-  if (message.chat == chat) {
-    renderMessage(message.chat, message.userName, message.type, message.messageID, message.messageFiles, message.link, message.text);
+  if (message.chatID == chat) {
+    renderMessage(message.chatID, message.userName, message.type, message.messageID, message.messageFiles, message.link, message.text);
+  }
+  if (message.groupID == chat) {
+    renderMessage(message.groupID, message.userName, message.type, message.messageID, message.messageFiles, message.link, message.text);
   }
 });
 
@@ -336,11 +342,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
-    socket.emit("message", { text: text, type: "text", userName: userInfo.name, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
-    el = document.createElement("div");
-    el.setAttribute("class", "ownMessage");
-    el.innerHTML = "<p>" + text + "</p><a>" + userInfo.name + "</a>";
-    messages.appendChild(el);
+    socket.emit("message", { text: text, type: "text", userName: userInfo.name, chatType: chatType, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
     textInput.value = "";
     textInput.style.height = "30px";
     textInput.style.borderTopLeftRadius = "0px";
