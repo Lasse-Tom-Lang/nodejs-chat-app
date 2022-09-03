@@ -24,7 +24,7 @@ interface chatInfo {
 
 let chatInfo: chatInfo;
 
-let chat:string;
+let chat: string;
 let chatType: "chat" | "group";
 
 interface userInfo {
@@ -34,7 +34,7 @@ interface userInfo {
 
 let userInfo: userInfo;
 
-let chatNameList:string[] = [];
+let chatNameList: string[] = [];
 
 let textInput = document.getElementById("messageInput") as HTMLInputElement;
 let chatList = document.getElementById("chatList") as HTMLDivElement;
@@ -57,7 +57,7 @@ let groupInfoLeave = document.getElementById("groupInfoLeave") as HTMLButtonElem
 
 let messageType: "text" | "file" | "image" | "link" = "text";
 
-function renderMessage(chatID, userName:string, type: "text" | "file" | "image" | "link", messageID: string, messageFiles: {name: string, id: string}[], link: string, text:string) {
+function renderMessage(chatID, userName: string, type: "text" | "file" | "image" | "link", messageID: string, messageFiles: { name: string, id: string }[], link: string, text: string) {
   if (type == "text") {
     let newMessage = `
       <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
@@ -74,7 +74,7 @@ function renderMessage(chatID, userName:string, type: "text" | "file" | "image" 
   if (type == "image") {
     let images = "";
     messageFiles.forEach(image => {
-      images += `<img src='/messageImages?chatID=${chatID}&messageID=${messageID}&imageName=${image.name}'>`;
+      images += `<img src='/messageImages?messageID=${messageID}&imageName=${image.name}'>`;
     });
     let newMessage = `
       <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
@@ -108,7 +108,7 @@ function renderMessage(chatID, userName:string, type: "text" | "file" | "image" 
   if (type == "file") {
     let files = "";
     messageFiles.forEach(file => {
-      files += `<a href='fileDownload/${file.id}?chatID=${chatID}&messageID=${messageID}' download>${file.name}</a>`;
+      files += `<a href='fileDownload/${file.name}?messageID=${messageID}' download>${file.name}</a>`;
     });
     let newMessage = `
       <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
@@ -203,6 +203,7 @@ document.getElementById("messageLinkButton")!.addEventListener("click", () => {
 function setChat(chatID, chatLoadType) {
   chatType = chatLoadType;
   chat = chatID;
+  socket.emit("joinedRoom", chatID);
   fetch(`/getChat?chatID=${chatID}&chatType=${chatType}`)
     .then(response => response.json())
     .then(data => {
@@ -225,13 +226,11 @@ function setChat(chatID, chatLoadType) {
         chatName.innerHTML = chatInfo.name;
       }
       messages.innerHTML = "";
-      console.log(chatInfo.messages)
       chatInfo.messages.sort((a, b) => {
         a.sendedAt = new Date(a.sendedAt);
         b.sendedAt = new Date(b.sendedAt)
         return a.sendedAt.getTime() - b.sendedAt.getTime();
       });
-      console.log(chatInfo.messages)
       chatInfo.messages.forEach(element => {
         renderMessage(chatID, element.userName, element.type, element.messageID, element.messageFiles, element.link, element.text)
       });
@@ -246,6 +245,7 @@ function back() {
   chat = "";
   chatList.style.display = "flex";
   messageDiv.style.display = "none";
+  socket.emit("leavedRoom", { chatID: chat })
 }
 
 window.onresize = function () {
@@ -261,7 +261,7 @@ fetch("/getUserInfos")
     userInfo = data;
     socket.emit("connected", data.name);
     data.chats.forEach(element => {
-      let user:{name:string,id:string} = data.name == element.users[0].name ? element.users[1] : element.users[0];
+      let user: { name: string, id: string } = data.name == element.users[0].name ? element.users[1] : element.users[0];
       chatList.innerHTML += `
         <button class="chat" onclick="setChat('${element.chatID}', 'chat');">
           <img src="profilePictures?user=${user.id}">
@@ -293,7 +293,7 @@ socket.on("connected", (users) => {
   });
 });
 
-socket.on("disconnected", (user:string) => {
+socket.on("disconnected", (user: string) => {
   if (chatNameList.includes(user)) {
     chatList.children[chatNameList.indexOf(user) + 1].querySelector("div")!.style.backgroundColor = "rgb(100, 100, 100)";
   }
@@ -313,7 +313,7 @@ interface socketMessage {
   groupID: string
 }
 
-socket.on("message", (message:socketMessage) => {
+socket.on("message", (message: socketMessage) => {
   if (message.chatID == chat) {
     renderMessage(message.chatID, message.userName, message.type, message.messageID, message.messageFiles, message.link, message.text);
   }
@@ -350,7 +350,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
-    socket.emit("message", { text: text, type: "text", userName: userInfo.name, chatType: chatType, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+    socket.emit("message", { text: text, type: "text", userName: userInfo.name, chatType: chatType, chat: chat });
     textInput.value = "";
     textInput.style.height = "30px";
     textInput.style.borderTopLeftRadius = "0px";
@@ -361,7 +361,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     while (imageMessagesIDs.includes(ID)) {
       ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
     }
-    let imageList:string[] = [];
+    let imageList: string[] = [];
     for (var i = 0; i < messageImageUpload.files!.length; i++) {
       if (["png", "jpeg", "jpg"].includes(messageImageUpload.files![i].name.split(".")[1].toLowerCase())) {
         imageList.push(messageImageUpload.files![i].name);
@@ -386,7 +386,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     messageImageUpload.value = "";
     messageType = "text";
     setTimeout(() => {
-      socket.emit("message", { text: text, type: "image", messageID: ID, images: imageList, user: { name: userInfo.name, id: userInfo.id }, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+      socket.emit("message", { text: text, type: "image", messageID: ID, images: imageList, user: { name: userInfo.name, id: userInfo.id }, chat: chat });
       var el = document.createElement("div");
       el.setAttribute("class", "ownMessage");
       el.appendChild(document.createElement("div"))
@@ -401,7 +401,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
     text = text.replace(/\n/g, "<br>");
-    socket.emit("message",{ text: text, type: "link", link: messageLinkInput.value, userName: userInfo.name, chatType: chatType, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+    socket.emit("message", { text: text, type: "link", link: messageLinkInput.value, userName: userInfo.name, chatType: chatType, chat: chat });
     textInput.value = "";
     textInput.style.height = "30px";
     textInput.style.borderTopLeftRadius = "0px";
@@ -416,7 +416,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     while (fileMessagesIDs.includes(ID)) {
       ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
     }
-    var fileList:string[] = [];
+    var fileList: string[] = [];
     for (i = 0; i < messageFileUpload.files!.length; i++) {
       fileList.push(messageFileUpload.files![i].name);
       var xml = new XMLHttpRequest();
@@ -438,7 +438,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     uploadInfo.style.display = "none";
     messageFileUpload.value = "";
     messageType = "text";
-    socket.emit("message", { text: text, type: "file", messageID: ID, files: fileList, user: { name: userInfo.name, id: userInfo.id }, chat: chat, sendTo: chatInfo.users.map((a) => { return a.name; }) });
+    socket.emit("message", { text: text, type: "file", messageID: ID, files: fileList, user: { name: userInfo.name, id: userInfo.id }, chat: chat });
     var el = document.createElement("div");
     el.setAttribute("class", "ownMessage");
     el.appendChild(document.createElement("div"));

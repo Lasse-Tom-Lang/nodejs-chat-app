@@ -9,7 +9,7 @@ import sessions from 'express-session';
 const oneDay = 86400000;
 var server = http.createServer(app);
 import { Socket } from 'socket.io';
-var io:Socket = require('socket.io')(server);
+var io: Socket = require('socket.io')(server);
 server.listen(8080);
 
 // Loding user data
@@ -111,7 +111,7 @@ app.get('/profilePictures', (req, res) => {
 });
 
 app.get('/messageImages', (req, res) => {
-  if (fs.existsSync(`data/Uploads/Images/${req.query.chatID}/${req.query.messageID}/${req.query.imageName}`)) res.sendFile(`data/Uploads/Images/${req.query.chatID}/${req.query.messageID}/${req.query.imageName}`, { root: __dirname });
+  if (fs.existsSync(`data/Uploads/Images/${req.query.messageID}/${req.query.imageName}`)) res.sendFile(`data/Uploads/Images/${req.query.messageID}/${req.query.imageName}`, { root: __dirname });
   else res.sendFile("imageError.png", { root: __dirname });
 });
 
@@ -247,7 +247,7 @@ app.post("/uploadImage", (req, res) => {
   let file = req.files!.myFile;
   let path = __dirname + `/data/Uploads/Images/${req.body.chatID}/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
-  file.mv(`${path}/${file.name}`, (err:Error) => {
+  file.mv(`${path}/${file.name}`, (err: Error) => {
     if (err) {
       return res.send({ "status": 0, "errorMessage": "Something went wrong" });
     }
@@ -259,7 +259,7 @@ app.post("/uploadFile", (req, res) => {
   let file = req.files!.myFile;
   let path = __dirname + `/data/Uploads/Files/${req.body.chatID}/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
-  file.mv(`${path}/${file.name}`, (err:Error) => {
+  file.mv(`${path}/${file.name}`, (err: Error) => {
     if (err) {
       return res.send({ "status": 0, "errorMessage": "Something went wrong" });
     }
@@ -270,13 +270,13 @@ app.post("/uploadFile", (req, res) => {
 app.post("/changeProfilePicture", (req, res) => {
   let file = req.files!.myFile;
   let path = __dirname + "/data/userImages/";
-  let userID:string;
+  let userID: string;
   usersInfo.forEach(element => {
-    if (element.name == req.session.user)  {
+    if (element.name == req.session.user) {
       userID = element.id; return
     }
   })
-  file.mv(path + userID + ".png", (err:Error) => {
+  file.mv(path + userID + ".png", (err: Error) => {
     if (err) {
       return res.send({ "status": 0, "errorMessage": "Something went wrong" });
     }
@@ -285,14 +285,14 @@ app.post("/changeProfilePicture", (req, res) => {
 });
 
 app.use("/fileDownload/:fileName", (req, res) => {
-  if (fs.existsSync(`data/Uploads/Files/${req.query.chatID}/${req.query.messageID}/${req.params.fileName}`)) {
-    res.sendFile(`data/Uploads/Files/${req.query.chatID}/${req.query.messageID}/${req.params.fileName}`, { root: __dirname });
+  if (fs.existsSync(`data/Uploads/Files/${req.query.messageID}/${req.params.fileName}`)) {
+    res.sendFile(`data/Uploads/Files/${req.query.messageID}/${req.params.fileName}`, { root: __dirname });
   }
 });
 
 // Setup socket.io
 
-let users:{[key: string]:string } = {};
+let users: { [key: string]: string } = {};
 
 interface socketMessage {
   sendTo: string[],
@@ -310,18 +310,26 @@ interface socketMessage {
 }
 
 io.on("connection", (socket: Socket) => {
-  socket.on("connected", (user:string) => {
+  socket.on("connected", (user: string) => {
     users[user] = socket.id;
     io.emit("connected", Object.keys(users));
   });
 
   socket.on("disconnect", () => {
-    let userName:string = Object.keys(users).find(key => users[key] === socket.id)!;
+    let userName: string = Object.keys(users).find(key => users[key] === socket.id)!;
     delete users[userName];
     io.emit("disconnected", (userName));
   })
 
-  socket.on("message", async (message:socketMessage) => {
+  socket.on("joinedRoom", (chatID) => {
+    socket.join(chatID);
+  })
+
+  socket.on("leavedRoom", (chatID) => {
+    socket.leave(chatID)
+  })
+
+  socket.on("message", async (message: socketMessage) => {
     let newMessage = {};
     if (message.type == "text") {
       if (message.chatType == "chat") {
@@ -369,10 +377,6 @@ io.on("connection", (socket: Socket) => {
         })
       }
     }
-    message.sendTo.forEach(element => {
-      if (users[element]) {
-        io.to(users[element]).emit("message", newMessage);
-      }
-    });
+    io.to(message.chat).emit("message", newMessage);
   });
 });
