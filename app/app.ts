@@ -78,7 +78,9 @@ function renderMessage(chatID, userName: string, type: "text" | "file" | "image"
     });
     let newMessage = `
       <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
-        ${images}
+        <div>
+          ${images}
+        </div>
         <p>
           ${text}
         </p>
@@ -314,6 +316,20 @@ interface socketMessage {
 }
 
 socket.on("message", (message: socketMessage) => {
+  if (message.type == "image" && message.userName == userInfo.name) {
+    for (var i = 0; i < messageImageUpload.files!.length; i++) {
+      if (["png", "jpeg", "jpg"].includes(messageImageUpload.files![i].name.split(".")[1].toLowerCase())) {
+        var xml = new XMLHttpRequest();
+        xml.open('POST', '/uploadImage', true);
+        var formdata = new FormData();
+        formdata.append("myFile", messageImageUpload.files![i]);
+        formdata.append("messageID", message.messageID);
+        xml.send(formdata);
+      }
+    };
+    setTimeout(() => {}, messageImageUpload.files!.length * 300)
+    messageImageUpload.value = "";
+  }
   if (message.chatID == chat) {
     renderMessage(message.chatID, message.userName, message.type, message.messageID, message.messageFiles, message.link, message.text);
   }
@@ -357,21 +373,10 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     textInput.style.borderTopRightRadius = "0px";
   }
   else if (messageType == "image" && chatInfo) {
-    var ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
-    while (imageMessagesIDs.includes(ID)) {
-      ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
-    }
-    let imageList: string[] = [];
+    let imageList: {name: string}[] = [];
     for (var i = 0; i < messageImageUpload.files!.length; i++) {
       if (["png", "jpeg", "jpg"].includes(messageImageUpload.files![i].name.split(".")[1].toLowerCase())) {
-        imageList.push(messageImageUpload.files![i].name);
-        var xml = new XMLHttpRequest();
-        xml.open('POST', '/uploadImage', true);
-        var formdata = new FormData();
-        formdata.append("myFile", messageImageUpload.files![i]);
-        formdata.append("chatID", chat);
-        formdata.append("messageID", ID.toString());
-        xml.send(formdata);
+        imageList.push({name: messageImageUpload.files![i].name});
       }
     };
     var text = textInput.value.replace(/</g, "&lt;");
@@ -383,19 +388,8 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     textInput.style.borderTopRightRadius = "0px";
     uploadInfo.style.bottom = "40px";
     uploadInfo.style.display = "none";
-    messageImageUpload.value = "";
     messageType = "text";
-    setTimeout(() => {
-      socket.emit("message", { text: text, type: "image", messageID: ID, images: imageList, user: { name: userInfo.name, id: userInfo.id }, chat: chat });
-      var el = document.createElement("div");
-      el.setAttribute("class", "ownMessage");
-      el.appendChild(document.createElement("div"))
-      imageList.forEach(image => {
-        el.firstChild!.innerHTML += `<img src='/messageImages?chatID=${chat}&messageID=${ID}&imageName=${image}'>`;
-      });
-      el.innerHTML += `<p>${text}</p><a>${userInfo.name}</a>`;
-      messages.appendChild(el);
-    }, imageList.length * 250);
+    socket.emit("message", { text: text, type: "image", messageFiles: imageList, userName: userInfo.name, chat: chat, chatType: chatType });
   }
   else if (messageType == "link" && chatInfo && messageLinkInput.value.trim().length != 0) {
     var text = textInput.value.replace(/</g, "&lt;");

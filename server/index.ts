@@ -14,7 +14,7 @@ server.listen(8080);
 
 // Loding user data
 
-import { PrismaClient } from "@prisma/client";
+import { Message, Prisma, PrismaClient } from "@prisma/client";
 const prisma: PrismaClient = new PrismaClient();
 
 async function testLogin(user: string, password: string) {
@@ -245,7 +245,7 @@ app.get("/getChat", (req: Request<"", "", "", getChatQuery>, res) => {
 
 app.post("/uploadImage", (req, res) => {
   let file = req.files!.myFile;
-  let path = __dirname + `/data/Uploads/Images/${req.body.chatID}/${req.body.messageID}`;
+  let path = __dirname + `/data/Uploads/Images/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${file.name}`, (err: Error) => {
     if (err) {
@@ -304,8 +304,7 @@ interface socketMessage {
   userName: string,
   link: string,
   messageFiles: {
-    name: string,
-    id: string
+    name: string
   }[]
 }
 
@@ -330,7 +329,7 @@ io.on("connection", (socket: Socket) => {
   })
 
   socket.on("message", async (message: socketMessage) => {
-    let newMessage = {};
+    let newMessage:Message
     if (message.type == "text") {
       if (message.chatType == "chat") {
         newMessage = await prisma.message.create({
@@ -377,6 +376,42 @@ io.on("connection", (socket: Socket) => {
         })
       }
     }
-    io.to(message.chat).emit("message", newMessage);
+    if (message.type == "image") {
+      if (message.chatType == "chat") {
+        newMessage = await prisma.message.create({
+          data: {
+            chatID: message.chat,
+            type: message.type,
+            text: message.text,
+            userName: message.userName
+          }
+        })
+      }
+      if (message.chatType == "group") {
+        newMessage = await prisma.message.create({
+          data: {
+            groupID: message.chat,
+            type: message.type,
+            text: message.text,
+            userName: message.userName
+          }
+        })
+      }
+      await prisma.messageFile.createMany({
+        data: message.messageFiles.map((file) => {return {
+          name: file.name,
+          messageID: newMessage.messageID
+        }})
+      });
+      newMessage = await prisma.message.findUnique({
+        where: {
+          messageID: newMessage!.messageID
+        },
+        include: {
+          messageFiles: true
+        }
+      });
+    }
+    io.to(message.chat).emit("message", newMessage!);
   });
 });
