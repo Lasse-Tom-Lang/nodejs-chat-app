@@ -1,4 +1,4 @@
-const socket = io("ws://localhost:8080");
+const socket = io("/");
 
 interface chatInfo {
   name: string,
@@ -327,7 +327,7 @@ socket.on("message", (message: socketMessage) => {
         xml.send(formdata);
       }
     };
-    setTimeout(() => {}, messageImageUpload.files!.length * 300)
+    setTimeout(() => { }, messageImageUpload.files!.length * 300)
     messageImageUpload.value = "";
   }
   if (message.chatID == chat) {
@@ -373,10 +373,10 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     textInput.style.borderTopRightRadius = "0px";
   }
   else if (messageType == "image" && chatInfo) {
-    let imageList: {name: string}[] = [];
+    let imageList: { name: string }[] = [];
     for (var i = 0; i < messageImageUpload.files!.length; i++) {
       if (["png", "jpeg", "jpg"].includes(messageImageUpload.files![i].name.split(".")[1].toLowerCase())) {
-        imageList.push({name: messageImageUpload.files![i].name});
+        imageList.push({ name: messageImageUpload.files![i].name });
       }
     };
     var text = textInput.value.replace(/</g, "&lt;");

@@ -1,4 +1,6 @@
 import fs from 'fs';
+import figlet from 'figlet';
+import gradient from "gradient-string";
 
 // Setup server
 import http from 'http';
@@ -10,7 +12,10 @@ const oneDay = 86400000;
 var server = http.createServer(app);
 import { Socket } from 'socket.io';
 var io: Socket = require('socket.io')(server);
-server.listen(8080);
+server.listen(8080, () => {
+  console.log(gradient.rainbow.multiline(figlet.textSync('Server started'), { interpolation: 'hsv' }));
+  console.log("Listening on port 8080");
+});
 
 // Loding user data
 
@@ -122,46 +127,30 @@ app.get("/getUserInfos", async (req, res) => {
         where: {
           name: req.session!.user
         },
-        select: {
-          chats: true,
-          groups: true,
-          name: true,
-          id: true
-        }
-      }
-    );
-    let chatUsers = await prisma.chat.findMany(
-      {
-        where: {
-          chatID: { in: data!.chats.chatID }
-        },
         include: {
-          users: {
-            select: {
-              name: true,
-              id: true
+          chats: {
+            include: {
+              users: {
+                select: {
+                  name: true,
+                  id: true
+                }
+              }
+            }
+          },
+          groups: {
+            include: {
+              users: {
+                select: {
+                  name: true,
+                  id: true
+                }
+              }
             }
           }
         }
       }
     );
-    let groupUsers = await prisma.group.findMany(
-      {
-        where: {
-          groupID: { in: data?.groups.groupID }
-        },
-        include: {
-          users: {
-            select: {
-              name: true,
-              id: true
-            }
-          }
-        }
-      }
-    );
-    data!.chats = chatUsers;
-    data!.groups = groupUsers;
     res.json(data);
     res.end();
   }
@@ -329,7 +318,7 @@ io.on("connection", (socket: Socket) => {
   })
 
   socket.on("message", async (message: socketMessage) => {
-    let newMessage:Message
+    let newMessage: Message
     if (message.type == "text") {
       if (message.chatType == "chat") {
         newMessage = await prisma.message.create({
@@ -398,10 +387,12 @@ io.on("connection", (socket: Socket) => {
         })
       }
       await prisma.messageFile.createMany({
-        data: message.messageFiles.map((file) => {return {
-          name: file.name,
-          messageID: newMessage.messageID
-        }})
+        data: message.messageFiles.map((file) => {
+          return {
+            name: file.name,
+            messageID: newMessage.messageID
+          }
+        })
       });
       newMessage = await prisma.message.findUnique({
         where: {
