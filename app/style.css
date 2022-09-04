@@ -491,6 +491,7 @@ main>div:nth-of-type(2) {
   flex-direction: column;
   box-shadow: 0 0 6px rgba(61, 61, 61, .5);
   display: none;
+  z-index: 200;
 }
 
 #groupInfoImg {

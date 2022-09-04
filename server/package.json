@@ -1,14 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is the package for the chat app project on https://github.com/Lasse-Tom-Lang/nodejs-chat-app",
   "main": "index.js",
   "type": "commonjs",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [],
-  "author": "",
+  "author": "Lasse Lang",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^4.2.1",

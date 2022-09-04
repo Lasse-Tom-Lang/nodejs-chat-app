@@ -96,12 +96,7 @@ app.get('/app.js', (req, res) => {
   res.end();
 });
 
-interface userAuthentificationQuery {
-  user: string
-  password: string
-}
-
-app.get('/userauthentification', async (req: Request<"", "", "", userAuthentificationQuery>, res) => {
+app.get('/userauthentification', async (req, res) => {
   let answer = await testLogin(req.query.user, req.query.password);
   if (answer.status == 1) {
     req.session!.user = req.query.user;
@@ -160,12 +155,7 @@ app.get("/getUserInfos", async (req, res) => {
   }
 });
 
-interface getChatQuery {
-  chatID: string,
-  chatType: "group" | "chat"
-}
-
-app.get("/getChat", (req: Request<"", "", "", getChatQuery>, res) => {
+app.get("/getChat", (req, res) => {
   if (req.session!.user) {
     if (req.query.chatID && req.query.chatType) {
       if (req.query.chatType == "chat") {
@@ -238,9 +228,9 @@ app.post("/uploadImage", (req, res) => {
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${file.name}`, (err: Error) => {
     if (err) {
-      return res.send({ "status": 0, "errorMessage": "Something went wrong" });
+      return res.json({ "status": 0, "errorMessage": "Something went wrong" });
     }
-    return res.send({ "status": 1 });
+    return res.json({ "status": 1 });
   });
 });
 
@@ -250,27 +240,28 @@ app.post("/uploadFile", (req, res) => {
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${file.name}`, (err: Error) => {
     if (err) {
-      return res.send({ "status": 0, "errorMessage": "Something went wrong" });
+      return res.json({ "status": 0, "errorMessage": "Something went wrong" });
     }
-    return res.send({ "status": 1 });
+    return res.json({ "status": 1 });
   });
 });
 
-app.post("/changeProfilePicture", (req, res) => {
-  let file = req.files!.myFile;
-  let path = __dirname + "/data/userImages/";
-  let userID: string;
-  usersInfo.forEach(element => {
-    if (element.name == req.session.user) {
-      userID = element.id; return
-    }
-  })
-  file.mv(path + userID + ".png", (err: Error) => {
-    if (err) {
-      return res.send({ "status": 0, "errorMessage": "Something went wrong" });
-    }
-    return res.send({ "status": 1 });
-  });
+app.post("/changeProfilePicture", async (req, res) => {
+  if (req.session!.user) {
+    let file = req.files!.myFile;
+    let path = __dirname + "/data/userImages/";
+    let userInfo = await prisma.user.findUnique({
+      where: {
+        name: req.session!.user
+      }
+    })
+    file.mv(path + userInfo!.id + ".png", (err: Error) => {
+      if (err) {
+        return res.json({ "status": 0, "errorMessage": "Something went wrong" });
+      }
+      return res.json({ "status": 1 });
+    });
+  }
 });
 
 app.use("/fileDownload/:fileName", (req, res) => {
