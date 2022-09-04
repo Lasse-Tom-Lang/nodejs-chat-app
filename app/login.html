@@ -12,17 +12,19 @@
   <body>
     <main>
       <div id="loginElements">
-        <h1>
-          Login
-        </h1>
-        <p id="error">
-
-        </p>
-        <input type="text" class="loginInputs" id="usernameInput" placeholder="Username">
-        <input type="password" class="loginInputs" id="passwordInput" placeholder="Password">
-        <button id="btn-login">
-          Login
-        </button>
+        <form>
+          <h1>
+            Login
+          </h1>
+          <p id="error">
+  
+          </p>
+          <input type="text" class="loginInputs" id="usernameInput" placeholder="Username">
+          <input type="password" class="loginInputs" id="passwordInput" placeholder="Password">
+          <button id="btn-login">
+            Login
+          </button>
+        </form>
       </div>
     </main>
     <script>
@@ -30,7 +32,8 @@
       password = document.getElementById("passwordInput");
       error = document.getElementById("error");
 
-      document.getElementById("btn-login").addEventListener("click", () => {
+      document.querySelector("form").addEventListener("submit", (event) => {
+        event.preventDefault();
         fetch(`/userauthentification?user=${username.value}&password=${CryptoJS.MD5(password.value).toString()}`)
           .then((response) => response.json())
           .then((data) => {
