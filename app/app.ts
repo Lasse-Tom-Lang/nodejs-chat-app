@@ -114,7 +114,9 @@ function renderMessage(chatID, userName: string, type: "text" | "file" | "image"
     });
     let newMessage = `
       <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
-        ${files}
+        <div class='fileList'>
+          ${files}
+        </div>
         <p>
           ${text}
         </p>
@@ -330,6 +332,18 @@ socket.on("message", (message: socketMessage) => {
     setTimeout(() => { }, messageImageUpload.files!.length * 300)
     messageImageUpload.value = "";
   }
+  if (message.type == "file" && message.userName == userInfo.name) {
+    for (i = 0; i < messageFileUpload.files!.length; i++) {
+      var xml = new XMLHttpRequest();
+      xml.open('POST', '/uploadFile', true);
+      var formdata = new FormData();
+      formdata.append("myFile", messageFileUpload.files![i]);
+      formdata.append("messageID", message.messageID);
+      xml.send(formdata);
+    };
+    setTimeout(() => { }, messageFileUpload.files!.length * 300)
+    messageFileUpload.value = "";
+  }
   if (message.chatID == chat) {
     renderMessage(message.chatID, message.userName, message.type, message.messageID, message.messageFiles, message.link, message.text);
   }
@@ -406,20 +420,9 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     messageType = "text";
   }
   else if (messageType == "file" && chatInfo) {
-    var ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
-    while (fileMessagesIDs.includes(ID)) {
-      ID = Math.floor(Math.random() * (999999999 - 100000000 + 1) + 100000000);
-    }
-    var fileList: string[] = [];
+    var fileList: { name: string }[] = [];
     for (i = 0; i < messageFileUpload.files!.length; i++) {
-      fileList.push(messageFileUpload.files![i].name);
-      var xml = new XMLHttpRequest();
-      xml.open('POST', '/uploadFile', true);
-      var formdata = new FormData();
-      formdata.append("myFile", messageFileUpload.files![i]);
-      formdata.append("chatID", chat);
-      formdata.append("messageID", ID.toString());
-      xml.send(formdata);
+      fileList.push({ name: messageFileUpload.files![i].name });
     };
     var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");
@@ -430,16 +433,7 @@ document.getElementById("btn-send")!.addEventListener("click", () => {
     textInput.style.borderTopRightRadius = "0px";
     uploadInfo.style.bottom = "40px";
     uploadInfo.style.display = "none";
-    messageFileUpload.value = "";
     messageType = "text";
-    socket.emit("message", { text: text, type: "file", messageID: ID, files: fileList, user: { name: userInfo.name, id: userInfo.id }, chat: chat });
-    var el = document.createElement("div");
-    el.setAttribute("class", "ownMessage");
-    el.appendChild(document.createElement("div"));
-    fileList.forEach(file => {
-      el.firstChild!.innerHTML += `<a href='fileDownload/${file}?chatID=${chat}&messageID=${ID}' download>${file}</a>`;
-    });
-    el.innerHTML += `<p>${text}</p><a>${userInfo.name}</a>`;
-    messages.appendChild(el);
+    socket.emit("message", { text: text, type: "file", messageFiles: fileList, userName: userInfo.name, chatType: chatType, chat: chat });
   }
 });

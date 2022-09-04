@@ -246,7 +246,7 @@ app.post("/uploadImage", (req, res) => {
 
 app.post("/uploadFile", (req, res) => {
   let file = req.files!.myFile;
-  let path = __dirname + `/data/Uploads/Files/${req.body.chatID}/${req.body.messageID}`;
+  let path = __dirname + `/data/Uploads/Files/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${file.name}`, (err: Error) => {
     if (err) {
@@ -365,7 +365,7 @@ io.on("connection", (socket: Socket) => {
         })
       }
     }
-    if (message.type == "image") {
+    if (message.type == "image" || message.type == "file") {
       if (message.chatType == "chat") {
         newMessage = await prisma.message.create({
           data: {
