@@ -23,13 +23,13 @@
         </div>
         <p id="uploadErrorMessage">
         </p>
-      </div>
-      <div id="passwordChangeDiv">
-        <input type="password" id="oldPasswordInput" placeholder="Old password">
-        <input type="password" id="newPasswordInput" placeholder="New password">
-        <button id="btn-changePassword">
-          Change Password
-        </button>
+        <div id="passwordChangeDiv">
+          <input type="password" id="oldPasswordInput" placeholder="Old password">
+          <input type="password" id="newPasswordInput" placeholder="New password">
+          <button id="btn-changePassword">
+            Change Password
+          </button>
+        </div>
       </div>
     </main>
     <script>
@@ -41,9 +41,24 @@
       btnChangePassword = document.getElementById("btn-changePassword");
 
       btnChangePassword.addEventListener("click", () => {
-        if (newPasswordInput.value.length > 10 && newPasswordInput.value.indexOf(' ') == -1) {
-          if (oldPasswordInput.value.trim().length > 10) {
-
+        if (newPasswordInput.value.length > 7 && newPasswordInput.value.indexOf(' ') == -1) {
+          newPasswordInput.style.backgroundColor = "white";
+          newPasswordInput.style.color = "black";
+          if (oldPasswordInput.value.trim().length != 0) {
+            oldPasswordInput.style.backgroundColor = "white";
+            oldPasswordInput.style.color = "black";
+            fetch(`/changePassword?oldPassword=${CryptoJS.MD5(oldPasswordInput.value).toString()}&newPassword=${CryptoJS.MD5(newPasswordInput.value).toString()}`)
+              .then(data => data.json())
+              .then(data => {
+                if (data.status == 0) {
+                  uploadErrorMessage.innerHTML = data.errorMessage;
+                }
+                else {
+                  console.log("Ja")
+                  oldPasswordInput.value = "";
+                  newPasswordInput.value = "";
+                }
+              })
           }
           else {
             oldPasswordInput.style.backgroundColor = "rgb(255, 49, 49)";
@@ -53,9 +68,13 @@
         else {
           newPasswordInput.style.backgroundColor = "rgb(255, 49, 49)";
           newPasswordInput.style.color = "white";
-          if (oldPasswordInput.value.trim().length < 10) {
+          if (oldPasswordInput.value.trim().length == 0) {
             oldPasswordInput.style.backgroundColor = "rgb(255, 49, 49)";
             oldPasswordInput.style.color = "white";
+          }
+          else {
+            oldPasswordInput.style.backgroundColor = "white";
+            oldPasswordInput.style.color = "black";
           }
         }
       });

@@ -270,6 +270,31 @@ app.use("/fileDownload/:fileName", (req, res) => {
   }
 });
 
+app.use("/changePassword", async (req, res) => {
+  if (req.query.oldPassword && req.query.newPassword && req.session!.user) {
+    let userExists = await prisma.user.findFirst({
+      where: {
+        name: req.session!.user,
+        password: req.query.oldPassword
+      }
+    });
+    if (userExists) {
+      await prisma.user.update({
+        where: {
+          name: req.session!.user
+        },
+        data: {
+          password: req.query.newPassword
+        }
+      })
+      res.json({"status": 1})
+    }
+    else {
+      res.json({"status": 0, "errorMessage": "Wrong password"})
+    }
+  }
+});
+
 // Setup socket.io
 
 let users: { [key: string]: string } = {};
