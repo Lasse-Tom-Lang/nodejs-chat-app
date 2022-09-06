@@ -54,6 +54,13 @@ let groupInfoName = document.getElementById("groupInfoName") as HTMLAnchorElemen
 let groupInfoUsers = document.getElementById("groupInfoUsers") as HTMLDivElement;
 let groupInfoClose = document.getElementById("groupInfoClose") as HTMLButtonElement;
 let groupInfoLeave = document.getElementById("groupInfoLeave") as HTMLButtonElement;
+let addDiv = document.getElementById("addDiv") as HTMLDivElement;
+let addWindowClose = document.getElementById("addWindowClose") as HTMLButtonElement;
+let addTypeChat = document.querySelector("#chooseAddType button:first-of-type") as HTMLButtonElement;
+let addTypeGroup = document.querySelector("#chooseAddType button:last-of-type") as HTMLButtonElement;
+let addSelectedType: "chat" | "group" = "chat";
+let addChatDiv = document.getElementById("addChatDiv") as HTMLDivElement;
+let addGroupDiv = document.getElementById("addGroupDiv") as HTMLDivElement;
 
 let messageType: "text" | "file" | "image" | "link" = "text";
 
@@ -128,6 +135,26 @@ function renderMessage(chatID, userName: string, type: "text" | "file" | "image"
     messages.innerHTML += newMessage;
   }
 }
+
+addWindowClose.addEventListener("click", () => {
+  addDiv.style.display = "none";
+})
+
+addTypeChat.addEventListener("click", () => {
+  addTypeChat.style.backgroundColor = "rgb(180, 180, 180)";
+  addTypeGroup.style.backgroundColor = "white";
+  addSelectedType = "chat";
+  addChatDiv.style.display = "block";
+  addGroupDiv.style.display = "none";
+})
+
+addTypeGroup.addEventListener("click", () => {
+  addTypeGroup.style.backgroundColor = "rgb(180, 180, 180)";
+  addTypeChat.style.backgroundColor = "white";
+  addSelectedType = "group";
+  addChatDiv.style.display = "none";
+  addGroupDiv.style.display = "block";
+})
 
 chatInfos.addEventListener("click", () => {
   if (chat) {

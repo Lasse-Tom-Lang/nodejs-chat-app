@@ -16,7 +16,7 @@
       <div id="chatList">
         <div id="menuItems">
           <a href="profile">Profile</a>
-          <a>Add</a>
+          <a id="btn-add" onclick="addDiv.style.display = 'flex'">Add</a>
         </div>
       </div>
       <div>
@@ -46,7 +46,7 @@
           <button id="btn-send">Send</button>
         </div>
       </div>
-      <div id="groupInfos">
+      <div id="groupInfos" class="overlayWindow">
         <button id="groupInfoClose">
           Close
         </button>
@@ -58,6 +58,36 @@
         <button id="groupInfoLeave">
           Leave group
         </button>
+      </div>
+      <div class="overlayWindow" id="addDiv" style="display: flex;">
+        <button id="addWindowClose">
+          Close
+        </button>
+        <div id="chooseAddType">
+          <h1>
+            Choose Type
+          </h1>
+          <button style="background-color: rgb(180, 180, 180);">
+            Chat
+          </button>
+          <button>
+            Group
+          </button>
+        </div>
+        <hr>
+        <div id="addChatDiv">
+          <h1>
+            Choose User
+          </h1>
+        </div>
+        <div id="addGroupDiv" style="display: none;">
+          <h1>
+            Choose Users
+          </h1>
+          <h1>
+            Choose Group Image
+          </h1>
+        </div>
       </div>
     </main>
   </body>

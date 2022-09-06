@@ -475,14 +475,15 @@ main>div:nth-of-type(2) {
   display: none;
 }
 
-#groupInfos {
+.overlayWindow {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: min(calc(100% - 40px), 400px);
   height: calc(100% - 40px);
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   background-color: white;
   border-radius: 15px;
   display: flex;
@@ -542,7 +543,7 @@ main>div:nth-of-type(2) {
   border-radius: 10px;
 }
 
-#groupInfoClose {
+.overlayWindow>button:first-of-type {
   position: absolute;
   align-self: flex-start;
   border: 0;
@@ -621,4 +622,30 @@ main>div:nth-of-type(2) {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+}
+
+#chooseAddType {
+  padding: 5px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+#chooseAddType h1 {
+  text-align: center;
+}
+
+#addDiv hr {
+  width: 100%;
+}
+
+#chooseAddType button {
+  width: 150px;
+  height: 30px;
+  background-color: white;
+  border: 0;
+  outline: 0;
+  font-size: 20px;
+  margin: 20px 10px;
+  cursor: pointer;
+  border-radius: 10px;
 }
