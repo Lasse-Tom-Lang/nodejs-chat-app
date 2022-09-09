@@ -144,7 +144,7 @@ addTypeChat.addEventListener("click", () => {
   addTypeChat.style.backgroundColor = "rgb(180, 180, 180)";
   addTypeGroup.style.backgroundColor = "white";
   addSelectedType = "chat";
-  addChatDiv.style.display = "block";
+  addChatDiv.style.display = "flex";
   addGroupDiv.style.display = "none";
 })
 
@@ -153,7 +153,7 @@ addTypeGroup.addEventListener("click", () => {
   addTypeChat.style.backgroundColor = "white";
   addSelectedType = "group";
   addChatDiv.style.display = "none";
-  addGroupDiv.style.display = "block";
+  addGroupDiv.style.display = "flex";
 })
 
 chatInfos.addEventListener("click", () => {
