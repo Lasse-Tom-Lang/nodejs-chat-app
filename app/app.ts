@@ -61,6 +61,8 @@ let addTypeGroup = document.querySelector("#chooseAddType button:last-of-type") 
 let addSelectedType: "chat" | "group" = "chat";
 let addChatDiv = document.getElementById("addChatDiv") as HTMLDivElement;
 let addGroupDiv = document.getElementById("addGroupDiv") as HTMLDivElement;
+let addChatInput = document.querySelector("#addChatDiv input") as HTMLInputElement;
+let addChatError = document.querySelector("#addChatDiv p") as HTMLParagraphElement;
 
 let messageType: "text" | "file" | "image" | "link" = "text";
 
@@ -155,6 +157,29 @@ addTypeGroup.addEventListener("click", () => {
   addChatDiv.style.display = "none";
   addGroupDiv.style.display = "flex";
 })
+
+addChatInput.addEventListener("focusout", () => {
+  fetch(`/userExists?userName=${addChatInput.value}`)
+    .then(data => data.json())
+    .then(data => {
+      if (data.status == 0) {
+        addChatError.style.display = "block";
+      }
+      if (data.status == 1) {
+        addChatError.style.display = "none";
+        let userInfo = `
+          <div id="addChatUser">
+            <img src="profilePictures?user=${data.id}">
+            <a>
+              ${addChatInput.value}
+            </a>
+          </div>
+        `;
+        addChatDiv.innerHTML += userInfo;
+        addChatInput.value = "";
+      }
+    });
+});
 
 chatInfos.addEventListener("click", () => {
   if (chat) {

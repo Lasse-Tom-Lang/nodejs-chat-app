@@ -222,6 +222,20 @@ app.get("/getChat", (req, res) => {
   }
 });
 
+app.get("/userExists", async (req, res) => {
+  let user = await prisma.user.findFirst({
+    where: {
+      name: req.query.userName
+    }
+  });
+  if (user) {
+    res.json({"status": 1, "id": user.id})
+  }
+  else {
+    res.json({"status": 0})
+  }
+});
+
 app.post("/uploadImage", (req, res) => {
   let file = req.files!.myFile;
   let path = __dirname + `/data/Uploads/Images/${req.body.messageID}`;
