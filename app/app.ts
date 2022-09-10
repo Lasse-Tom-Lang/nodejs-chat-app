@@ -158,27 +158,32 @@ addTypeGroup.addEventListener("click", () => {
   addGroupDiv.style.display = "flex";
 })
 
-addChatInput.addEventListener("focusout", () => {
-  fetch(`/userExists?userName=${addChatInput.value}`)
-    .then(data => data.json())
-    .then(data => {
-      if (data.status == 0) {
-        addChatError.style.display = "block";
-      }
-      if (data.status == 1) {
-        addChatError.style.display = "none";
-        let userInfo = `
-          <div id="addChatUser">
-            <img src="profilePictures?user=${data.id}">
-            <a>
-              ${addChatInput.value}
-            </a>
-          </div>
-        `;
-        addChatDiv.innerHTML += userInfo;
-        addChatInput.value = "";
-      }
-    });
+addChatInput.addEventListener("blur", () => {
+  if (addChatInput.value != "" && addChatInput.value != userInfo.name) {
+    fetch(`/userExists?userName=${addChatInput.value}`)
+      .then(data => data.json())
+      .then(data => {
+        if (data.status == 0) {
+          addChatError.innerHTML = "User not found";
+        }
+        if (data.status == 1) {
+          addChatError.innerHTML = "";
+          let userInfo = `
+            <div id="addChatUser">
+              <img src="profilePictures?user=${data.id}">
+              <a>
+                ${data.name}
+              </a>
+            </div>
+          `;
+          addChatDiv.innerHTML += userInfo;
+          addChatInput.value = "";
+        }
+      });
+  }
+  else {
+    addChatError.innerHTML = "";
+  }
 });
 
 chatInfos.addEventListener("click", () => {

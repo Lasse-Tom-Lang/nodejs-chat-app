@@ -229,7 +229,7 @@ app.get("/userExists", async (req, res) => {
     }
   });
   if (user) {
-    res.json({"status": 1, "id": user.id})
+    res.json({"status": 1, "id": user.id, "name": user.name})
   }
   else {
     res.json({"status": 0})
