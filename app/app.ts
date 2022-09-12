@@ -63,6 +63,9 @@ let addChatDiv = document.getElementById("addChatDiv") as HTMLDivElement;
 let addGroupDiv = document.getElementById("addGroupDiv") as HTMLDivElement;
 let addChatInput = document.querySelector("#addChatDiv input") as HTMLInputElement;
 let addChatError = document.querySelector("#addChatDiv p") as HTMLParagraphElement;
+let choosenUser = document.getElementById("choosenUser") as HTMLDivElement;
+let createButton = document.querySelector("#addDiv>button:last-of-type") as HTMLButtonElement;
+let choosenUserID:String;
 
 let messageType: "text" | "file" | "image" | "link" = "text";
 
@@ -177,7 +180,7 @@ addChatInput.addEventListener("blur", () => {
             </div>
           `;
           addChatDiv.innerHTML += userInfo;
-          addChatInput.value = "";
+          choosenUserID = data.id;
         }
       });
   }
@@ -216,6 +219,12 @@ chatInfos.addEventListener("click", () => {
     }
   }
 });
+
+createButton.addEventListener("click", () => {
+  if (choosenUserID && userInfo.id) {
+    fetch(`/addChat?user1=${choosenUserID}&user2=${userInfo.id}`)
+  }
+})
 
 groupInfoClose.addEventListener("click", () => {
   groupInfos.style.display = "none";

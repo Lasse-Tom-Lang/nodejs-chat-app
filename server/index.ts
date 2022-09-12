@@ -236,6 +236,25 @@ app.get("/userExists", async (req, res) => {
   }
 });
 
+app.get("/addChat", async (req, res) => {
+  if (req.query.user1 && req.query.user2) {
+    let data = await prisma.chat.create({
+      data: {
+        users: {
+          connect: [
+            {
+              id: req.query.user1,
+            },
+            {
+              id: req.query.user2
+            }
+          ]
+        }
+      }
+    });
+  }
+})
+
 app.post("/uploadImage", (req, res) => {
   let file = req.files!.myFile;
   let path = __dirname + `/data/Uploads/Images/${req.body.messageID}`;
