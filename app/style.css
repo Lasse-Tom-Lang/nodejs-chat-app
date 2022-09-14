@@ -720,3 +720,37 @@ main>div:nth-of-type(2) {
   border-radius: 10px;
   cursor: pointer;
 }
+
+#addGroupDiv {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#addGroupDiv input {
+  width: 90%;
+  padding: 8px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: 0;
+  outline: 0;
+  margin-top: 10px;
+  background-color: rgb(230, 230, 230);
+}
+
+#addGroupDiv p {
+  color: red;
+  font-size: 16px;
+  margin: 5px;
+}
+
+#choosenUsers {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 10px;
+}

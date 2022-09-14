@@ -63,9 +63,12 @@ let addChatDiv = document.getElementById("addChatDiv") as HTMLDivElement;
 let addGroupDiv = document.getElementById("addGroupDiv") as HTMLDivElement;
 let addChatInput = document.querySelector("#addChatDiv input") as HTMLInputElement;
 let addChatError = document.querySelector("#addChatDiv p") as HTMLParagraphElement;
-let choosenUser = document.getElementById("choosenUser") as HTMLDivElement;
 let createButton = document.querySelector("#addDiv>button:last-of-type") as HTMLButtonElement;
 let choosenUserID:String;
+let addGroupInput = document.querySelector("#addGroupDiv input") as HTMLInputElement;
+let addGroupError = document.querySelector("#addGroupDiv p") as HTMLParagraphElement;
+let choosenUsers = document.getElementById("choosenUsers") as HTMLDivElement;
+let choosenUsersIDs:string[] = [];
 
 let messageType: "text" | "file" | "image" | "link" = "text";
 
@@ -189,6 +192,34 @@ addChatInput.addEventListener("blur", () => {
   }
 });
 
+addGroupInput.addEventListener("blur", () => {
+  if (addGroupInput.value != "" && addGroupInput.value != userInfo.name) {
+    fetch(`/userExists?userName=${addGroupInput.value}`)
+      .then(data => data.json())
+      .then(data => {
+        if (data.status == 0) {
+          addGroupError.innerHTML = "User not found";
+        }
+        if (data.status == 1) {
+          addGroupError.innerHTML = "";
+          let userInfo = `
+            <div id="addChatUser">
+              <img src="profilePictures?user=${data.id}">
+              <a>
+                ${data.name}
+              </a>
+            </div>
+          `;
+          choosenUsers.innerHTML += userInfo;
+          choosenUsersIDs.push(data.id);
+        }
+      });
+  }
+  else {
+    addGroupError.innerHTML = "";
+  }
+});
+
 chatInfos.addEventListener("click", () => {
   if (chat) {
     groupInfos.style.display = "flex";
@@ -223,6 +254,7 @@ chatInfos.addEventListener("click", () => {
 createButton.addEventListener("click", () => {
   if (choosenUserID && userInfo.id) {
     fetch(`/addChat?user1=${choosenUserID}&user2=${userInfo.id}`)
+    addDiv.style.display = "none";
   }
 })
 
