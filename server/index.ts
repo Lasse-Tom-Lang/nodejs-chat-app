@@ -255,6 +255,31 @@ app.get("/addChat", async (req, res) => {
   }
 })
 
+app.post("/createGroup", async (req, res) => {
+  let group = await prisma.group.create({
+    data: {
+      name: req.body.groupName,
+      users: {
+        connect: req.body.users.map((user:string) => {
+            return {
+              id: user
+            }
+          })
+        }
+      }
+    }
+  );
+  let file = req.files!.myFile;
+  let path = __dirname + `/data/userImages`;
+  if (!fs.existsSync(path)) fs.mkdir(path, () => { });
+  file.mv(`${path}/${group.groupID}.png`, (err: Error) => {
+    if (err) {
+      return res.json({ "status": 0, "errorMessage": "Something went wrong" });
+    }
+    return res.json({ "status": 1 });
+  });
+});
+
 app.post("/uploadImage", (req, res) => {
   let file = req.files!.myFile;
   let path = __dirname + `/data/Uploads/Images/${req.body.messageID}`;

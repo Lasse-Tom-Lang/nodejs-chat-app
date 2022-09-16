@@ -65,7 +65,9 @@ let addChatInput = document.querySelector("#addChatDiv input") as HTMLInputEleme
 let addChatError = document.querySelector("#addChatDiv p") as HTMLParagraphElement;
 let createButton = document.querySelector("#addDiv>button:last-of-type") as HTMLButtonElement;
 let choosenUserID:String;
-let addGroupInput = document.querySelector("#addGroupDiv input") as HTMLInputElement;
+let addGroupInput = document.querySelector("#addGroupDiv input:nth-of-type(2)") as HTMLInputElement;
+let addGroupName = document.querySelector("#addGroupDiv input:nth-of-type(1)") as HTMLInputElement;
+let addGroupImage = document.querySelector("#addGroupDiv input:nth-of-type(3)") as HTMLInputElement;
 let addGroupError = document.querySelector("#addGroupDiv p") as HTMLParagraphElement;
 let choosenUsers = document.getElementById("choosenUsers") as HTMLDivElement;
 let choosenUsersIDs:string[] = [];
@@ -212,6 +214,7 @@ addGroupInput.addEventListener("blur", () => {
           `;
           choosenUsers.innerHTML += userInfo;
           choosenUsersIDs.push(data.id);
+          addGroupInput.value = "";
         }
       });
   }
@@ -252,8 +255,21 @@ chatInfos.addEventListener("click", () => {
 });
 
 createButton.addEventListener("click", () => {
-  if (choosenUserID && userInfo.id) {
+  if (addSelectedType == "chat" && choosenUserID && userInfo.id) {
     fetch(`/addChat?user1=${choosenUserID}&user2=${userInfo.id}`)
+    addDiv.style.display = "none";
+  }
+  else if (addSelectedType == "group" && choosenUsersIDs && userInfo.id && addGroupName.value.trim().length > 0 && addGroupImage.files!.length == 1) {
+    let xml = new XMLHttpRequest();
+    xml.open('POST', '/createGroup', true);
+    let formdata = new FormData();
+    formdata.append("myFile", addGroupImage.files![0]);
+    formdata.append("groupName", addGroupName.value);
+    formdata.append("users", userInfo.id);
+    for (let i = 0;i < choosenUsersIDs.length; i++) {
+      formdata.append("users", choosenUsersIDs[i])
+    }
+    xml.send(formdata);
     addDiv.style.display = "none";
   }
 })
