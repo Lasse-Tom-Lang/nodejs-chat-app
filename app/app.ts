@@ -64,13 +64,13 @@ let addGroupDiv = document.getElementById("addGroupDiv") as HTMLDivElement;
 let addChatInput = document.querySelector("#addChatDiv input") as HTMLInputElement;
 let addChatError = document.querySelector("#addChatDiv p") as HTMLParagraphElement;
 let createButton = document.querySelector("#addDiv>button:last-of-type") as HTMLButtonElement;
-let choosenUserID:String;
+let choosenUserID: String;
 let addGroupInput = document.querySelector("#addGroupDiv input:nth-of-type(2)") as HTMLInputElement;
 let addGroupName = document.querySelector("#addGroupDiv input:nth-of-type(1)") as HTMLInputElement;
 let addGroupImage = document.querySelector("#addGroupDiv input:nth-of-type(3)") as HTMLInputElement;
 let addGroupError = document.querySelector("#addGroupDiv p") as HTMLParagraphElement;
 let choosenUsers = document.getElementById("choosenUsers") as HTMLDivElement;
-let choosenUsersIDs:string[] = [];
+let choosenUsersIDs: string[] = [];
 
 let messageType: "text" | "file" | "image" | "link" = "text";
 
@@ -145,6 +145,13 @@ function renderMessage(chatID, userName: string, type: "text" | "file" | "image"
     messages.innerHTML += newMessage;
   }
 }
+
+groupInfoLeave.addEventListener("click", () => {
+  if (chatType == "chat") {
+    fetch(`/deleteChat?chatID=${chatInfo.chatID}`);
+    groupInfos.style.display = "none";
+  }
+});
 
 addWindowClose.addEventListener("click", () => {
   addDiv.style.display = "none";
@@ -266,7 +273,7 @@ createButton.addEventListener("click", () => {
     formdata.append("myFile", addGroupImage.files![0]);
     formdata.append("groupName", addGroupName.value);
     formdata.append("users", userInfo.id);
-    for (let i = 0;i < choosenUsersIDs.length; i++) {
+    for (let i = 0; i < choosenUsersIDs.length; i++) {
       formdata.append("users", choosenUsersIDs[i])
     }
     xml.send(formdata);

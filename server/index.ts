@@ -229,10 +229,10 @@ app.get("/userExists", async (req, res) => {
     }
   });
   if (user) {
-    res.json({"status": 1, "id": user.id, "name": user.name})
+    res.json({ "status": 1, "id": user.id, "name": user.name })
   }
   else {
-    res.json({"status": 0})
+    res.json({ "status": 0 })
   }
 });
 
@@ -255,19 +255,56 @@ app.get("/addChat", async (req, res) => {
   }
 })
 
+app.get("/deleteChat", async (req, res) => {
+  let messages = await prisma.message.findMany({
+    where: {
+      chatID: req.query.chatID
+    },
+    include: {
+      messageFiles: true
+    }
+  });
+  messages.forEach((message) => {
+    if (message.type == "file") {
+      fs.rmSync(`data/uploads/files/${message.messageID}`, { recursive: true, force: true })
+    }
+    if (message.type == "image") {
+      fs.rmSync(`data/uploads/images/${message.messageID}`, { recursive: true, force: true })
+    }
+  });
+
+  await prisma.chat.delete({
+    where: {
+      chatID: req.query.chatID
+    }
+  });
+
+  await prisma.messageFile.deleteMany({
+    where: {
+      messageID: {in: messages.map((message => {return message.messageID}))}
+    }
+  });
+
+  await prisma.message.deleteMany({
+    where: {
+      messageID: {in: messages.map((message => {return message.messageID}))}
+    }
+  });
+});
+
 app.post("/createGroup", async (req, res) => {
   let group = await prisma.group.create({
     data: {
       name: req.body.groupName,
       users: {
-        connect: req.body.users.map((user:string) => {
-            return {
-              id: user
-            }
-          })
-        }
+        connect: req.body.users.map((user: string) => {
+          return {
+            id: user
+          }
+        })
       }
     }
+  }
   );
   let file = req.files!.myFile;
   let path = __dirname + `/data/userImages`;
@@ -345,10 +382,10 @@ app.use("/changePassword", async (req, res) => {
           password: req.query.newPassword
         }
       })
-      res.json({"status": 1})
+      res.json({ "status": 1 })
     }
     else {
-      res.json({"status": 0, "errorMessage": "Wrong password"})
+      res.json({ "status": 0, "errorMessage": "Wrong password" })
     }
   }
 });
