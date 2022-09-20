@@ -256,7 +256,7 @@ chatInfos.addEventListener("click", () => {
         groupInfoImg.src = `profilePictures?user=${chatInfo.users[0].id}`;
         groupInfoName.innerHTML = chatInfo.users[0].name;
       }
-      groupInfoLeave.innerHTML = "Leave chat";
+      groupInfoLeave.innerHTML = "Delete chat";
     }
   }
 });
