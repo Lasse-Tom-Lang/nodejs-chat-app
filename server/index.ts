@@ -44,11 +44,9 @@ async function testLogin(user: string, password: string) {
 
 // Setup sessions
 
-declare global {
-  namespace Express {
-    interface Session {
-      user: string
-    }
+declare module 'express-session' {
+  interface SessionData {
+    user: string
   }
 }
 
@@ -66,7 +64,7 @@ app.use(
 );
 
 app.get('/', (req, res) => {
-  if (req.session!.user) {
+  if (req.session.user) {
     res.write(fs.readFileSync("../app/index.html"));
     res.end();
   }
@@ -77,7 +75,7 @@ app.get('/', (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
-  if (req.session!.user) {
+  if (req.session.user) {
     res.write(fs.readFileSync("../app/profile.html"));
     res.end();
   }
@@ -97,9 +95,11 @@ app.get('/app.js', (req, res) => {
 });
 
 app.get('/userauthentification', async (req, res) => {
-  let answer = await testLogin(req.query.user, req.query.password);
+  let user = req.query.user as string;
+  let password = req.query.password as string;
+  let answer = await testLogin(user, password);
   if (answer.status == 1) {
-    req.session!.user = req.query.user;
+    req.session.user = user;
   }
   res.json(answer);
   res.end();
@@ -116,7 +116,7 @@ app.get('/messageImages', (req, res) => {
 });
 
 app.get("/getUserInfos", async (req, res) => {
-  if (req.session!.user) {
+  if (req.session.user) {
     let data = await prisma.user.findFirst(
       {
         where: {
@@ -156,14 +156,15 @@ app.get("/getUserInfos", async (req, res) => {
 });
 
 app.get("/getChat", (req, res) => {
-  if (req.session!.user) {
+  let chatID = req.query.chatID as string;
+  if (req.session.user) {
     if (req.query.chatID && req.query.chatType) {
       if (req.query.chatType == "chat") {
         (
           async () => {
             let data = await prisma.chat.findFirst({
               where: {
-                chatID: req.query.chatID
+                chatID: chatID
               },
               include: {
                 users: {
@@ -189,7 +190,7 @@ app.get("/getChat", (req, res) => {
           async () => {
             let data = await prisma.group.findFirst({
               where: {
-                groupID: req.query.chatID
+                groupID: chatID
               },
               include: {
                 users: {
@@ -223,9 +224,10 @@ app.get("/getChat", (req, res) => {
 });
 
 app.get("/userExists", async (req, res) => {
+  let userName = req.query.userName as string;
   let user = await prisma.user.findFirst({
     where: {
-      name: req.query.userName
+      name: userName
     }
   });
   if (user) {
@@ -237,16 +239,18 @@ app.get("/userExists", async (req, res) => {
 });
 
 app.get("/addChat", async (req, res) => {
+  let user1 = req.query.user1 as string;
+  let user2 = req.query.user2 as string;
   if (req.query.user1 && req.query.user2) {
     let data = await prisma.chat.create({
       data: {
         users: {
           connect: [
             {
-              id: req.query.user1,
+              id: user1,
             },
             {
-              id: req.query.user2
+              id: user2
             }
           ]
         }
@@ -256,9 +260,10 @@ app.get("/addChat", async (req, res) => {
 })
 
 app.get("/deleteChat", async (req, res) => {
+  let chatID = req.query.chatID as string;
   let messages = await prisma.message.findMany({
     where: {
-      chatID: req.query.chatID
+      chatID: chatID
     },
     include: {
       messageFiles: true
@@ -275,7 +280,7 @@ app.get("/deleteChat", async (req, res) => {
 
   await prisma.chat.delete({
     where: {
-      chatID: req.query.chatID
+      chatID: chatID
     }
   });
 
@@ -366,20 +371,22 @@ app.use("/fileDownload/:fileName", (req, res) => {
 });
 
 app.use("/changePassword", async (req, res) => {
-  if (req.query.oldPassword && req.query.newPassword && req.session!.user) {
+  let oldPassword = req.query.oldPassword as string;
+  let newPassword = req.query.newPassword as string;
+  if (req.query.oldPassword && req.query.newPassword && req.session.user) {
     let userExists = await prisma.user.findFirst({
       where: {
         name: req.session!.user,
-        password: req.query.oldPassword
+        password: oldPassword
       }
     });
     if (userExists) {
       await prisma.user.update({
         where: {
-          name: req.session!.user
+          name: req.session.user
         },
         data: {
-          password: req.query.newPassword
+          password: newPassword
         }
       })
       res.json({ "status": 1 })
