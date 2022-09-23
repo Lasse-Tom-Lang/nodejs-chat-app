@@ -297,6 +297,44 @@ app.get("/deleteChat", async (req, res) => {
   });
 });
 
+app.get("/deleteGroup", async (req, res) => {
+  let groupID = req.query.groupID as string;
+  let messages = await prisma.message.findMany({
+    where: {
+      groupID: groupID
+    },
+    include: {
+      messageFiles: true
+    }
+  });
+  messages.forEach((message) => {
+    if (message.type == "file") {
+      fs.rmSync(`data/uploads/files/${message.messageID}`, { recursive: true, force: true })
+    }
+    if (message.type == "image") {
+      fs.rmSync(`data/uploads/images/${message.messageID}`, { recursive: true, force: true })
+    }
+  });
+
+  await prisma.group.delete({
+    where: {
+      groupID: groupID
+    }
+  });
+
+  await prisma.messageFile.deleteMany({
+    where: {
+      messageID: {in: messages.map((message => {return message.messageID}))}
+    }
+  });
+
+  await prisma.message.deleteMany({
+    where: {
+      messageID: {in: messages.map((message => {return message.messageID}))}
+    }
+  });
+});
+
 app.post("/createGroup", async (req, res) => {
   let group = await prisma.group.create({
     data: {

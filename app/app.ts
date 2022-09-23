@@ -153,6 +153,13 @@ groupInfoLeave.addEventListener("click", () => {
   }
 });
 
+groupInfoLeave.addEventListener("click", () => {
+  if (chatType == "group") {
+    fetch(`/deleteGroup?groupID=${chatInfo.groupID}`);
+    groupInfos.style.display = "none";
+  }
+});
+
 addWindowClose.addEventListener("click", () => {
   addDiv.style.display = "none";
 })
@@ -245,7 +252,7 @@ chatInfos.addEventListener("click", () => {
           groupInfoUsers.innerHTML += `<a>${element.name}</a>`;
         }
       });
-      groupInfoLeave.innerHTML = "Leave group";
+      groupInfoLeave.innerHTML = "Delete group";
     }
     else {
       if (chatInfo.users[0].id == userInfo.id) {
