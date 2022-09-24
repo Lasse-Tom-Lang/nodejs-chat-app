@@ -16,6 +16,7 @@
       <div id="chatList">
         <div id="menuItems">
           <a href="profile">Profile</a>
+          <a id="btn-logout" onclick="fetch('/logout').then(data => location.reload())">Logout</a>
           <a id="btn-add" onclick="addDiv.style.display = 'flex'">Add</a>
         </div>
       </div>

@@ -297,8 +297,14 @@ app.get("/deleteChat", async (req, res) => {
   });
 });
 
+app.get("/logout", (req, res) => {
+  req.session.user = undefined;
+  res.end();
+})
+
 app.get("/deleteGroup", async (req, res) => {
   let groupID = req.query.groupID as string;
+  fs.unlinkSync(`data/userImages/${groupID}.png`);
   let messages = await prisma.message.findMany({
     where: {
       groupID: groupID
