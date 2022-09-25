@@ -1,8 +1,8 @@
 node_modules
 userImages
-Images
+images
 .DS_Store
-Files
+files
 .env
 migrations
 app.js
