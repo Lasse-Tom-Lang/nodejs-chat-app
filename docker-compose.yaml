@@ -22,6 +22,7 @@ services:
     restart: unless-stopped
     volumes:
       - files:/server/data
+    command: bash -c "npx prisma migrate dev && node /server/index.js"
 
 volumes:
   db:

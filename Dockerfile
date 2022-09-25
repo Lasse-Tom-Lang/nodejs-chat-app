@@ -15,5 +15,3 @@ COPY ./server/* ./
 EXPOSE 8080
 
 RUN npx prisma generate
-
-CMD [ "node", "./index.js" ]
