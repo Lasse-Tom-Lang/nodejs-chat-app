@@ -1,0 +1,25 @@
+version: '3.8'
+
+services: 
+  database:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+      - MYSQL_DATABASE=db
+    ports:
+      - 3306:3306
+    volumes:
+      - db:/var/lib/mysql
+    restart: unless-stopped
+  server:
+    depends_on:
+      - database
+    build: ./
+    ports:
+      - 8080:8080
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+volumes:
+  db:

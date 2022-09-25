@@ -6,10 +6,9 @@
   "type": "commonjs",
   "keywords": [],
   "author": "Lasse Lang",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@prisma/client": "^4.2.1",
-    "crypto": "^1.0.1",
     "express": "^4.18.1",
     "express-fileupload": "^1.4.0",
     "express-session": "^1.17.3",
