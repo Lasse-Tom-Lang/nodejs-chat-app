@@ -111,7 +111,7 @@ app.get('/profilePictures', (req, res) => {
 });
 
 app.get('/messageImages', (req, res) => {
-  if (fs.existsSync(`data/Uploads/Images/${req.query.messageID}/${req.query.imageName}`)) res.sendFile(`data/Uploads/Images/${req.query.messageID}/${req.query.imageName}`, { root: __dirname });
+  if (fs.existsSync(`data/uploads/images/${req.query.messageID}/${req.query.imageName}`)) res.sendFile(`data/uploads/images/${req.query.messageID}/${req.query.imageName}`, { root: __dirname });
   else res.sendFile("imageError.png", { root: __dirname });
 });
 
@@ -387,7 +387,7 @@ app.post("/createUser", async (req, res) => {
 
 app.post("/uploadImage", (req, res) => {
   let file = req.files!.myFile;
-  let path = __dirname + `/data/Uploads/Images/${req.body.messageID}`;
+  let path = __dirname + `/data/uploads/images/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${file.name}`, (err: Error) => {
     if (err) {
@@ -399,7 +399,7 @@ app.post("/uploadImage", (req, res) => {
 
 app.post("/uploadFile", (req, res) => {
   let file = req.files!.myFile;
-  let path = __dirname + `/data/Uploads/Files/${req.body.messageID}`;
+  let path = __dirname + `/data/uploads/files/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${file.name}`, (err: Error) => {
     if (err) {
@@ -428,8 +428,8 @@ app.post("/changeProfilePicture", async (req, res) => {
 });
 
 app.use("/fileDownload/:fileName", (req, res) => {
-  if (fs.existsSync(`data/Uploads/Files/${req.query.messageID}/${req.params.fileName}`)) {
-    res.sendFile(`data/Uploads/Files/${req.query.messageID}/${req.params.fileName}`, { root: __dirname });
+  if (fs.existsSync(`data/uploads/files/${req.query.messageID}/${req.params.fileName}`)) {
+    res.sendFile(`data/uploads/files/${req.query.messageID}/${req.params.fileName}`, { root: __dirname });
   }
 });
 

@@ -1,8 +1,9 @@
-version: '3.8'
+version: "3.9"
 
 services: 
   database:
     image: mysql:latest
+    container_name: database
     environment:
       - MYSQL_ROOT_PASSWORD=12345678
       - MYSQL_DATABASE=db
@@ -12,14 +13,16 @@ services:
       - db:/var/lib/mysql
     restart: unless-stopped
   server:
-    depends_on:
-      - database
+    container_name: server
     build: ./
     ports:
       - 8080:8080
     stdin_open: true
     tty: true
     restart: unless-stopped
+    volumes:
+      - files:/server/data
 
 volumes:
   db:
+  files:
