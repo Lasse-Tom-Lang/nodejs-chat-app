@@ -11,6 +11,17 @@
   </head>
   <body>
     <main>
+      <div class="overlayWindow" id="createUserWindow">
+        <button onclick="createUserWindow.style.display='none'">Back</button>
+        <h1>Choose name</h1>
+        <input type="text" placeholder="Username">
+        <p></p>
+        <h1>Choose password</h1>
+        <input type="password" placeholder="Password">
+        <h1>Choose image</h1>
+        <input type="file">
+        <button>Add</button>
+      </div>
       <div id="loginElements">
         <form>
           <h1>
@@ -24,10 +35,45 @@
           <button id="btn-login">
             Login
           </button>
+          <p style="text-align: center;">
+            or <br>
+            <a style="color: grey; cursor:pointer;" onclick="createUserWindow.style.display='flex'">Registrate</a>
+          </p>
         </form>
       </div>
     </main>
     <script>
+      createUserWindow = document.querySelector("main>div:first-of-type");
+      newUserName = document.querySelector("#createUserWindow input:first-of-type");
+      newUserNameError = document.querySelector("#createUserWindow p");
+      newUserPassword = document.querySelector("#createUserWindow input:nth-of-type(2)");
+      newUserImage = document.querySelector("#createUserWindow input:last-of-type");
+      newUserCreate = document.querySelector("#createUserWindow button:last-of-type");
+
+      newUserCreate.addEventListener("click", () => {
+        console.log("JA")
+        if (newUserImage.files.length == 1 && newUserPassword.value.length > 7 && newUserPassword.value.indexOf(' ') == -1) {
+          fetch(`/userExists?userName=${newUserName.value}`)
+          .then(data => data.json())
+          .then(data => {
+            if (data.status == 1) {
+              newUserNameError.innerHTML = "User already exists";
+            }
+            else {
+              newUserNameError.innerHTML = "";
+              xml = new XMLHttpRequest();
+              xml.open('POST', '/createUser', true);
+              formdata = new FormData();
+              formdata.append("myFile", newUserImage.files[0]);
+              formdata.append("name", newUserName.value);
+              formdata.append("password", CryptoJS.MD5(newUserPassword.value).toString());
+              xml.send(formdata);
+              createUserWindow.style.display = "none";
+            }
+          });
+        }
+      });
+
       username = document.getElementById("usernameInput");
       password = document.getElementById("passwordInput");
       error = document.getElementById("error");
@@ -45,6 +91,8 @@
             }
           });
       });
+
+
     </script>
   </body>
 </html>

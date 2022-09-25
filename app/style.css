@@ -771,3 +771,31 @@ main>div:nth-of-type(2) {
   flex-direction: column;
   margin-bottom: 10px;
 }
+
+#createUserWindow input {
+  width: 90%;
+  padding: 8px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: 0;
+  outline: 0;
+  margin-top: 10px;
+  background-color: rgb(230, 230, 230);
+}
+
+#createUserWindow h1 {
+  margin-top: 10px;
+}
+
+#createUserWindow>button:last-of-type {
+  position: absolute;
+  bottom: 10px;
+  background-color: rgb(180, 180, 180);
+  border: 0;
+  outline: 0;
+  font-size: 20px;
+  padding: 4px;
+  width: 90%;
+  border-radius: 10px;
+  cursor: pointer;
+}

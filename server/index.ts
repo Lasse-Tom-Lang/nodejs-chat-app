@@ -366,6 +366,25 @@ app.post("/createGroup", async (req, res) => {
   });
 });
 
+app.post("/createUser", async (req, res) => {
+  let user = await prisma.user.create({
+    data: {
+      name: req.body.name,
+      password: req.body.password
+    }
+  }
+  );
+  let file = req.files!.myFile;
+  let path = __dirname + `/data/userImages`;
+  if (!fs.existsSync(path)) fs.mkdir(path, () => { });
+  file.mv(`${path}/${user.id}.png`, (err: Error) => {
+    if (err) {
+      return res.json({ "status": 0, "errorMessage": "Something went wrong" });
+    }
+    return res.json({ "status": 1 });
+  });
+});
+
 app.post("/uploadImage", (req, res) => {
   let file = req.files!.myFile;
   let path = __dirname + `/data/Uploads/Images/${req.body.messageID}`;
