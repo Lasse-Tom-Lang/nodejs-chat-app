@@ -63,6 +63,10 @@ app.use(
   fileUpload()
 );
 
+if (!fs.existsSync(__dirname + "/data/uploads"))  fs.mkdirSync(__dirname + "/data/uploads");
+if (!fs.existsSync(__dirname + "/data/uploads/images")) fs.mkdir(__dirname + "/data/uploads/images", () => { });
+if (!fs.existsSync(__dirname + "/data/uploads/files")) fs.mkdir(__dirname + "/data/uploads/files", () => { });
+
 app.get('/', (req, res) => {
   if (req.session.user) {
     res.write(fs.readFileSync("../app/index.html"));
@@ -286,13 +290,13 @@ app.get("/deleteChat", async (req, res) => {
 
   await prisma.messageFile.deleteMany({
     where: {
-      messageID: {in: messages.map((message => {return message.messageID}))}
+      messageID: { in: messages.map((message => { return message.messageID })) }
     }
   });
 
   await prisma.message.deleteMany({
     where: {
-      messageID: {in: messages.map((message => {return message.messageID}))}
+      messageID: { in: messages.map((message => { return message.messageID })) }
     }
   });
 });
@@ -330,13 +334,13 @@ app.get("/deleteGroup", async (req, res) => {
 
   await prisma.messageFile.deleteMany({
     where: {
-      messageID: {in: messages.map((message => {return message.messageID}))}
+      messageID: { in: messages.map((message => { return message.messageID })) }
     }
   });
 
   await prisma.message.deleteMany({
     where: {
-      messageID: {in: messages.map((message => {return message.messageID}))}
+      messageID: { in: messages.map((message => { return message.messageID })) }
     }
   });
 });
