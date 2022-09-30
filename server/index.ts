@@ -6,7 +6,7 @@ import gradient from "gradient-string";
 import http from 'http';
 import express, { Express, Request } from 'express';
 const app: Express = express();
-import fileUpload from 'express-fileupload';
+import fileUpload, { UploadedFile } from 'express-fileupload';
 import sessions from 'express-session';
 const oneDay = 86400000;
 var server = http.createServer(app);
@@ -359,7 +359,7 @@ app.post("/createGroup", async (req, res) => {
     }
   }
   );
-  let file = req.files!.myFile;
+  let file = req.files!.myFile as UploadedFile;
   let path = __dirname + `/data/userImages`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${group.groupID}.png`, (err: Error) => {
@@ -378,7 +378,7 @@ app.post("/createUser", async (req, res) => {
     }
   }
   );
-  let file = req.files!.myFile;
+  let file = req.files!.myFile as UploadedFile;
   let path = __dirname + `/data/userImages`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${user.id}.png`, (err: Error) => {
@@ -389,8 +389,20 @@ app.post("/createUser", async (req, res) => {
   });
 });
 
+app.post("/changeGroupImage", (req, res) => {
+  let file = req.files!.myFile as UploadedFile;
+  let path = __dirname + `/data/userImages`;
+  if (!fs.existsSync(path)) fs.mkdir(path, () => { });
+  file.mv(`${path}/${req.body.groupID}.png`, (err: Error) => {
+    if (err) {
+      return res.json({ "status": 0, "errorMessage": "Something went wrong" });
+    }
+    return res.json({ "status": 1 });
+  });
+});
+
 app.post("/uploadImage", (req, res) => {
-  let file = req.files!.myFile;
+  let file = req.files!.myFile as UploadedFile;
   let path = __dirname + `/data/uploads/images/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${file.name}`, (err: Error) => {
@@ -402,7 +414,7 @@ app.post("/uploadImage", (req, res) => {
 });
 
 app.post("/uploadFile", (req, res) => {
-  let file = req.files!.myFile;
+  let file = req.files!.myFile as UploadedFile;
   let path = __dirname + `/data/uploads/files/${req.body.messageID}`;
   if (!fs.existsSync(path)) fs.mkdir(path, () => { });
   file.mv(`${path}/${file.name}`, (err: Error) => {
@@ -415,7 +427,7 @@ app.post("/uploadFile", (req, res) => {
 
 app.post("/changeProfilePicture", async (req, res) => {
   if (req.session!.user) {
-    let file = req.files!.myFile;
+    let file = req.files!.myFile as UploadedFile;
     let path = __dirname + "/data/userImages/";
     let userInfo = await prisma.user.findUnique({
       where: {
@@ -586,7 +598,7 @@ io.on("connection", (socket: Socket) => {
         include: {
           messageFiles: true
         }
-      });
+      }) as Message;
     }
     io.to(message.chat).emit("message", newMessage!);
   });

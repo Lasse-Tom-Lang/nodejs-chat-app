@@ -70,6 +70,7 @@ let addGroupName = document.querySelector("#addGroupDiv input:nth-of-type(1)") a
 let addGroupImage = document.querySelector("#addGroupDiv input:nth-of-type(3)") as HTMLInputElement;
 let addGroupError = document.querySelector("#addGroupDiv p") as HTMLParagraphElement;
 let choosenUsers = document.getElementById("choosenUsers") as HTMLDivElement;
+let groupImageInput = document.getElementById("groupImageInput") as HTMLInputElement;
 let choosenUsersIDs: string[] = [];
 
 let messageType: "text" | "file" | "image" | "link" = "text";
@@ -253,6 +254,10 @@ chatInfos.addEventListener("click", () => {
         }
       });
       groupInfoLeave.innerHTML = "Delete group";
+      groupInfoImg.addEventListener("click", () => {
+        groupImageInput.click();
+      });
+      groupInfoImg.style.cursor = "pointer";
     }
     else {
       if (chatInfo.users[0].id == userInfo.id) {
@@ -264,8 +269,19 @@ chatInfos.addEventListener("click", () => {
         groupInfoName.innerHTML = chatInfo.users[0].name;
       }
       groupInfoLeave.innerHTML = "Delete chat";
+      groupInfoImg.removeEventListener("click", () => {});
+      groupInfoImg.style.cursor = "default";
     }
   }
+});
+
+groupImageInput.addEventListener("change", () => {
+  let xml = new XMLHttpRequest();
+    xml.open('POST', '/changeGroupImage', true);
+    let formdata = new FormData();
+    formdata.append("myFile", groupImageInput.files![0]);
+    formdata.append("groupID", chatInfo.groupID!);
+    xml.send(formdata);
 });
 
 createButton.addEventListener("click", () => {
