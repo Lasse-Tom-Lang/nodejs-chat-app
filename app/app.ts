@@ -71,6 +71,7 @@ let addGroupImage = document.querySelector("#addGroupDiv input:nth-of-type(3)") 
 let addGroupError = document.querySelector("#addGroupDiv p") as HTMLParagraphElement;
 let choosenUsers = document.getElementById("choosenUsers") as HTMLDivElement;
 let groupImageInput = document.getElementById("groupImageInput") as HTMLInputElement;
+let groupAddUser = document.getElementById("groupAddUser") as HTMLButtonElement;
 let choosenUsersIDs: string[] = [];
 
 let messageType: "text" | "file" | "image" | "link" = "text";
@@ -258,6 +259,7 @@ chatInfos.addEventListener("click", () => {
         groupImageInput.click();
       });
       groupInfoImg.style.cursor = "pointer";
+      groupAddUser.style.display = "block";
     }
     else {
       if (chatInfo.users[0].id == userInfo.id) {
@@ -271,6 +273,7 @@ chatInfos.addEventListener("click", () => {
       groupInfoLeave.innerHTML = "Delete chat";
       groupInfoImg.removeEventListener("click", () => {});
       groupInfoImg.style.cursor = "default";
+      groupAddUser.style.display = "none";
     }
   }
 });
