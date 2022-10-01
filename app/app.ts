@@ -22,19 +22,44 @@ interface chatInfo {
   }[]
 }
 
-let chatInfo: chatInfo;
-
-let chat: string;
-let chatType: "chat" | "group";
+interface socketMessage {
+  messageID: string,
+  text: string,
+  type: "text" | "file" | "image" | "link",
+  userName: string,
+  link: string,
+  messageFiles: {
+    name: string,
+    id: string
+  }[],
+  chatID: string,
+  groupID: string
+}
 
 interface userInfo {
   name: string,
   id: string
 }
 
+type MessageType = "text" | "file" | "image" | "link";
+
+let chatInfo: chatInfo;
+
+let chat: string;
+
+let chatType: "chat" | "group";
+
 let userInfo: userInfo;
 
 let chatNameList: string[] = [];
+
+let addSelectedType: "chat" | "group" = "chat";
+
+let choosenUserID: String;
+
+let choosenUsersIDs: string[] = [];
+
+let messageType: MessageType = "text";
 
 let textInput = document.getElementById("messageInput") as HTMLInputElement;
 let chatList = document.getElementById("chatList") as HTMLDivElement;
@@ -58,13 +83,11 @@ let addDiv = document.getElementById("addDiv") as HTMLDivElement;
 let addWindowClose = document.getElementById("addWindowClose") as HTMLButtonElement;
 let addTypeChat = document.querySelector("#chooseAddType button:first-of-type") as HTMLButtonElement;
 let addTypeGroup = document.querySelector("#chooseAddType button:last-of-type") as HTMLButtonElement;
-let addSelectedType: "chat" | "group" = "chat";
 let addChatDiv = document.getElementById("addChatDiv") as HTMLDivElement;
 let addGroupDiv = document.getElementById("addGroupDiv") as HTMLDivElement;
 let addChatInput = document.querySelector("#addChatDiv input") as HTMLInputElement;
 let addChatError = document.querySelector("#addChatDiv p") as HTMLParagraphElement;
 let createButton = document.querySelector("#addDiv>button:last-of-type") as HTMLButtonElement;
-let choosenUserID: String;
 let addGroupInput = document.querySelector("#addGroupDiv input:nth-of-type(2)") as HTMLInputElement;
 let addGroupName = document.querySelector("#addGroupDiv input:nth-of-type(1)") as HTMLInputElement;
 let addGroupImage = document.querySelector("#addGroupDiv input:nth-of-type(3)") as HTMLInputElement;
@@ -73,92 +96,89 @@ let choosenUsers = document.getElementById("choosenUsers") as HTMLDivElement;
 let groupImageInput = document.getElementById("groupImageInput") as HTMLInputElement;
 let groupAddUser = document.getElementById("groupAddUser") as HTMLButtonElement;
 let groupAddUserInput = document.getElementById("groupAddUserInput") as HTMLInputElement;
-let choosenUsersIDs: string[] = [];
+let messageImageButton = document.getElementById("messageImageButton") as HTMLButtonElement;
+let messageFileButton = document.getElementById("messageFileButton") as HTMLButtonElement;
+let messageLinkButton = document.getElementById("messageLinkButton") as HTMLButtonElement;
+let btnSend = document.getElementById("btn-send") as HTMLButtonElement;
 
-let messageType: "text" | "file" | "image" | "link" = "text";
-
-function renderMessage(chatID, userName: string, type: "text" | "file" | "image" | "link", messageID: string, messageFiles: { name: string, id: string }[], link: string, text: string) {
-  if (type == "text") {
-    let newMessage = `
-      <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
-        <p>
-          ${text}
-        </p>
-        <a>
-          ${userName}
-        </a>
-      </div>
-    `;
-    messages.innerHTML += newMessage;
-  }
-  if (type == "image") {
-    let images = "";
-    messageFiles.forEach(image => {
-      images += `<img src='/messageImages?messageID=${messageID}&imageName=${image.name}'>`;
-    });
-    let newMessage = `
-      <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
-        <div>
-          ${images}
+function renderMessage(userName: string, type: MessageType, messageID: string, messageFiles: { name: string, id: string }[], link: string, text: string) {
+  switch (type) {
+    case "text":
+      var newMessage = `
+        <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
+          <p>
+            ${text}
+          </p>
+          <a>
+            ${userName}
+          </a>
         </div>
-        <p>
-          ${text}
-        </p>
-        <a>
-          ${userName}
-        </a>
-      </div>
-    `;
-    messages.innerHTML += newMessage;
-  }
-  if (type == "link") {
-    let newMessage = `
-      <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
-        <a class='messageLink' href='${link}'>
-          ${link}
-        </a>
-        <p>
-          ${text}
-        </p>
-        <a>
-          ${userName}
-        </a>
-      </div>
-    `;
-    messages.innerHTML += newMessage;
-  }
-  if (type == "file") {
-    let files = "";
-    messageFiles.forEach(file => {
-      files += `<a href='fileDownload/${file.name}?messageID=${messageID}' download>${file.name}</a>`;
-    });
-    let newMessage = `
-      <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
-        <div class='fileList'>
-          ${files}
+      `;
+      break;
+    case "image":
+      let images = "";
+      messageFiles.forEach(image => {
+        images += `<img src='/messageImages?messageID=${messageID}&imageName=${image.name}'>`;
+      });
+      var newMessage = `
+        <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
+          <div>
+            ${images}
+          </div>
+          <p>
+            ${text}
+          </p>
+          <a>
+            ${userName}
+          </a>
         </div>
-        <p>
-          ${text}
-        </p>
-        <a>
-          ${userName}
-        </a>
-      </div>
-    `;
-    messages.innerHTML += newMessage;
+      `;
+      break;
+    case "link":
+      var newMessage = `
+        <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
+          <a class='messageLink' href='${link}'>
+            ${link}
+          </a>
+          <p>
+            ${text}
+          </p>
+          <a>
+            ${userName}
+          </a>
+        </div>
+      `;
+      break;
+    case "file":
+      let files = "";
+      messageFiles.forEach(file => {
+        files += `<a href='fileDownload/${file.name}?messageID=${messageID}' download>${file.name}</a>`;
+      });
+      var newMessage = `
+        <div class=${userName == userInfo.name ? "ownMessage" : "otherMessage"}>
+          <div class='fileList'>
+            ${files}
+          </div>
+          <p>
+            ${text}
+          </p>
+          <a>
+            ${userName}
+          </a>
+        </div>
+      `;
+      break;
   }
+  messages.innerHTML += newMessage;
 }
-
-groupInfoLeave.addEventListener("click", () => {
-  if (chatType == "chat") {
-    fetch(`/deleteChat?chatID=${chatInfo.chatID}`);
-    groupInfos.style.display = "none";
-  }
-});
 
 groupInfoLeave.addEventListener("click", () => {
   if (chatType == "group") {
     fetch(`/deleteGroup?groupID=${chatInfo.groupID}`);
+    groupInfos.style.display = "none";
+  }
+  else if (chatType == "chat") {
+    fetch(`/deleteChat?chatID=${chatInfo.chatID}`);
     groupInfos.style.display = "none";
   }
 });
@@ -172,7 +192,7 @@ groupAddUser.addEventListener("click", () => {
 groupAddUserInput.addEventListener("blur", () => {
   groupAddUserInput.style.display = "none";
   groupAddUser.style.display = "block";
-  if (!chatInfo.users.map(user => {return user.name.toLowerCase()}).includes(groupAddUserInput.value.toLowerCase())) {
+  if (!chatInfo.users.map(user => { return user.name.toLowerCase() }).includes(groupAddUserInput.value.toLowerCase())) {
     fetch(`/groupAddUser?groupID=${chatInfo.groupID}&userName=${groupAddUserInput.value}`)
       .then(data => data.json())
       .then(data => {
@@ -293,7 +313,7 @@ chatInfos.addEventListener("click", () => {
         groupInfoName.innerHTML = chatInfo.users[0].name;
       }
       groupInfoLeave.innerHTML = "Delete chat";
-      groupInfoImg.removeEventListener("click", () => {});
+      groupInfoImg.removeEventListener("click", () => { });
       groupInfoImg.style.cursor = "default";
       groupAddUser.style.display = "none";
     }
@@ -302,11 +322,11 @@ chatInfos.addEventListener("click", () => {
 
 groupImageInput.addEventListener("change", () => {
   let xml = new XMLHttpRequest();
-    xml.open('POST', '/changeGroupImage', true);
-    let formdata = new FormData();
-    formdata.append("myFile", groupImageInput.files![0]);
-    formdata.append("groupID", chatInfo.groupID!);
-    xml.send(formdata);
+  xml.open('POST', '/changeGroupImage', true);
+  let formdata = new FormData();
+  formdata.append("myFile", groupImageInput.files![0]);
+  formdata.append("groupID", chatInfo.groupID!);
+  xml.send(formdata);
 });
 
 createButton.addEventListener("click", () => {
@@ -342,11 +362,11 @@ function toggleMessageType() {
   }
 }
 
-document.getElementById("messageImageButton")!.addEventListener("click", () => {
+messageImageButton.addEventListener("click", () => {
   messageImageUpload.click();
 });
 
-document.getElementById("messageFileButton")!.addEventListener("click", () => {
+messageFileButton.addEventListener("click", () => {
   messageFileUpload.click();
 });
 
@@ -366,7 +386,7 @@ messageFileUpload.addEventListener("change", () => {
   messageType = "file";
 });
 
-document.getElementById("messageLinkButton")!.addEventListener("click", () => {
+messageLinkButton.addEventListener("click", () => {
   messageTypeDiv.style.display = "none";
   uploadInfo.style.display = "none";
   messageLinkInput.style.display = "block";
@@ -405,7 +425,7 @@ function setChat(chatID, chatLoadType) {
         return a.sendedAt.getTime() - b.sendedAt.getTime();
       });
       chatInfo.messages.forEach(element => {
-        renderMessage(chatID, element.userName, element.type, element.messageID, element.messageFiles, element.link, element.text)
+        renderMessage(element.userName, element.type, element.messageID, element.messageFiles, element.link, element.text)
       });
     });
   if (window.innerWidth <= 800 && chat) {
@@ -458,7 +478,7 @@ fetch("/getUserInfos")
     });
   });
 
-socket.on("connected", (users) => {
+socket.on("connected", (users: string[]) => {
   users.forEach(element => {
     if (chatNameList.includes(element)) {
       chatList.children[chatNameList.indexOf(element) + 1].querySelector("div")!.style.backgroundColor = "rgb(86, 255, 100)";
@@ -471,20 +491,6 @@ socket.on("disconnected", (user: string) => {
     chatList.children[chatNameList.indexOf(user) + 1].querySelector("div")!.style.backgroundColor = "rgb(100, 100, 100)";
   }
 });
-
-interface socketMessage {
-  messageID: string,
-  text: string,
-  type: "text" | "file" | "image" | "link",
-  userName: string,
-  link: string,
-  messageFiles: {
-    name: string,
-    id: string
-  }[],
-  chatID: string,
-  groupID: string
-}
 
 socket.on("message", (message: socketMessage) => {
   if (message.type == "image" && message.userName == userInfo.name) {
@@ -513,11 +519,8 @@ socket.on("message", (message: socketMessage) => {
     setTimeout(() => { }, messageFileUpload.files!.length * 300)
     messageFileUpload.value = "";
   }
-  if (message.chatID == chat) {
-    renderMessage(message.chatID, message.userName, message.type, message.messageID, message.messageFiles, message.link, message.text);
-  }
-  if (message.groupID == chat) {
-    renderMessage(message.groupID, message.userName, message.type, message.messageID, message.messageFiles, message.link, message.text);
+  if (message.chatID == chat || message.groupID == chat) {
+    renderMessage(message.userName, message.type, message.messageID, message.messageFiles, message.link, message.text);
   }
 });
 
@@ -544,7 +547,7 @@ textInput.addEventListener("input", () => {
   }
 });
 
-document.getElementById("btn-send")!.addEventListener("click", () => {
+btnSend.addEventListener("click", () => {
   if (textInput.value.trim().length != 0 && chatInfo && messageType == "text") {
     var text = textInput.value.replace(/</g, "&lt;");
     text = text.replace(/>/g, "&gt;");

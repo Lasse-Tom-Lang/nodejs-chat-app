@@ -63,7 +63,7 @@ app.use(
   fileUpload()
 );
 
-if (!fs.existsSync(__dirname + "/data/uploads"))  fs.mkdirSync(__dirname + "/data/uploads");
+if (!fs.existsSync(__dirname + "/data/uploads")) fs.mkdirSync(__dirname + "/data/uploads");
 if (!fs.existsSync(__dirname + "/data/uploads/images")) fs.mkdir(__dirname + "/data/uploads/images", () => { });
 if (!fs.existsSync(__dirname + "/data/uploads/files")) fs.mkdir(__dirname + "/data/uploads/files", () => { });
 
@@ -366,11 +366,11 @@ app.get("/groupAddUser", async (req, res) => {
         }
       }
     });
-    res.json({"status": 1, "user": user.name});
+    res.json({ "status": 1, "user": user.name });
     res.end()
   }
   else {
-    res.json({"status": 0, "errorMessage": "User not found"});
+    res.json({ "status": 0, "errorMessage": "User not found" });
     res.end()
   }
 })
