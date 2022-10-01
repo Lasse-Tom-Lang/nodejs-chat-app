@@ -72,6 +72,7 @@ let addGroupError = document.querySelector("#addGroupDiv p") as HTMLParagraphEle
 let choosenUsers = document.getElementById("choosenUsers") as HTMLDivElement;
 let groupImageInput = document.getElementById("groupImageInput") as HTMLInputElement;
 let groupAddUser = document.getElementById("groupAddUser") as HTMLButtonElement;
+let groupAddUserInput = document.getElementById("groupAddUserInput") as HTMLInputElement;
 let choosenUsersIDs: string[] = [];
 
 let messageType: "text" | "file" | "image" | "link" = "text";
@@ -160,6 +161,27 @@ groupInfoLeave.addEventListener("click", () => {
     fetch(`/deleteGroup?groupID=${chatInfo.groupID}`);
     groupInfos.style.display = "none";
   }
+});
+
+groupAddUser.addEventListener("click", () => {
+  groupAddUserInput.style.display = "block";
+  groupAddUser.style.display = "none";
+  groupAddUserInput.focus();
+});
+
+groupAddUserInput.addEventListener("blur", () => {
+  groupAddUserInput.style.display = "none";
+  groupAddUser.style.display = "block";
+  if (!chatInfo.users.map(user => {return user.name.toLowerCase()}).includes(groupAddUserInput.value.toLowerCase())) {
+    fetch(`/groupAddUser?groupID=${chatInfo.groupID}&userName=${groupAddUserInput.value}`)
+      .then(data => data.json())
+      .then(data => {
+        if (data.status == 1) {
+          groupInfoUsers.innerHTML += `<a>${data.user}</a>`
+        }
+      });
+  }
+  groupAddUserInput.value = "";
 });
 
 addWindowClose.addEventListener("click", () => {

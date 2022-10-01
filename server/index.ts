@@ -345,6 +345,36 @@ app.get("/deleteGroup", async (req, res) => {
   });
 });
 
+app.get("/groupAddUser", async (req, res) => {
+  let groupID = req.query.groupID as string;
+  let userName = req.query.userName as string;
+  let user = await prisma.user.findFirst({
+    where: {
+      name: userName
+    }
+  });
+  if (user) {
+    await prisma.group.update({
+      where: {
+        groupID: groupID
+      },
+      data: {
+        users: {
+          connect: {
+            name: userName
+          }
+        }
+      }
+    });
+    res.json({"status": 1, "user": user.name});
+    res.end()
+  }
+  else {
+    res.json({"status": 0, "errorMessage": "User not found"});
+    res.end()
+  }
+})
+
 app.post("/createGroup", async (req, res) => {
   let group = await prisma.group.create({
     data: {
