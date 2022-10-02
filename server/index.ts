@@ -307,6 +307,18 @@ app.get("/logout", (req, res) => {
   res.end();
 })
 
+app.get("/changeBio", async (req, res) => {
+  let bio = req.query.bio as string;
+  await prisma.user.update({
+    where: {
+      name: req.session.user
+    },
+    data: {
+      bio: bio
+    }
+  })
+});
+
 app.get("/deleteGroup", async (req, res) => {
   let groupID = req.query.groupID as string;
   fs.unlinkSync(`data/userImages/${groupID}.png`);
@@ -406,7 +418,8 @@ app.post("/createUser", async (req, res) => {
   let user = await prisma.user.create({
     data: {
       name: req.body.name,
-      password: req.body.password
+      password: req.body.password,
+      bio: req.body.bio
     }
   }
   );

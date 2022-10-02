@@ -15,6 +15,7 @@
         <button onclick="createUserWindow.style.display='none'">Back</button>
         <h1>Choose name</h1>
         <input type="text" placeholder="Username">
+        <input type="text" placeholder="Bio">
         <p></p>
         <h1>Choose password</h1>
         <input type="password" placeholder="Password">
@@ -46,13 +47,14 @@
       createUserWindow = document.querySelector("main>div:first-of-type");
       newUserName = document.querySelector("#createUserWindow input:first-of-type");
       newUserNameError = document.querySelector("#createUserWindow p");
-      newUserPassword = document.querySelector("#createUserWindow input:nth-of-type(2)");
+      newUserBio = document.querySelector("#createUserWindow input:nth-of-type(2)");
+      newUserPassword = document.querySelector("#createUserWindow input:nth-of-type(3)");
       newUserImage = document.querySelector("#createUserWindow input:last-of-type");
       newUserCreate = document.querySelector("#createUserWindow button:last-of-type");
 
       newUserCreate.addEventListener("click", () => {
         console.log("JA")
-        if (newUserImage.files.length == 1 && newUserPassword.value.length > 7 && newUserPassword.value.indexOf(' ') == -1) {
+        if (newUserImage.files.length == 1 && newUserBio.value != "" && newUserPassword.value.length > 7 && newUserPassword.value.indexOf(' ') == -1) {
           fetch(`/userExists?userName=${newUserName.value}`)
           .then(data => data.json())
           .then(data => {
@@ -66,6 +68,7 @@
               formdata = new FormData();
               formdata.append("myFile", newUserImage.files[0]);
               formdata.append("name", newUserName.value);
+              formdata.append("bio", newUserBio.value);
               formdata.append("password", CryptoJS.MD5(newUserPassword.value).toString());
               xml.send(formdata);
               createUserWindow.style.display = "none";

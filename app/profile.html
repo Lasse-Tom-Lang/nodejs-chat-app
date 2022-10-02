@@ -23,6 +23,7 @@
         </div>
         <p id="uploadErrorMessage">
         </p>
+        <input type="text" placeholder="Bio" id="userBio">
         <div id="passwordChangeDiv">
           <input type="password" id="oldPasswordInput" placeholder="Old password">
           <input type="password" id="newPasswordInput" placeholder="New password">
@@ -39,6 +40,11 @@
       oldPasswordInput = document.getElementById("oldPasswordInput");
       newPasswordInput = document.getElementById("newPasswordInput");
       btnChangePassword = document.getElementById("btn-changePassword");
+      bio = document.getElementById("userBio");
+
+      bio.addEventListener("blur", () => {
+        fetch(`/changeBio?bio=${bio.value}`)
+      });
 
       btnChangePassword.addEventListener("click", () => {
         if (newPasswordInput.value.length > 7 && newPasswordInput.value.indexOf(' ') == -1) {
@@ -99,6 +105,7 @@
         .then(data => {
           profileImage.src = `profilePictures?user=${data.id}`;
           document.getElementById("userInfoName").innerHTML = data.name;
+          bio.value = data.bio;
         });
     </script>
   </body>
