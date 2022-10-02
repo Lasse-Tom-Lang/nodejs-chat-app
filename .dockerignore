@@ -1,2 +1,6 @@
-node_modules
-migrations
+./server/node_modules/*
+./server/index.ts
+./app/app.ts
+./server/tsconfig.json
+./server/data
+./server/.env

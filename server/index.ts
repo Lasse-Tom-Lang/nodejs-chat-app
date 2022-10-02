@@ -19,7 +19,7 @@ server.listen(8080, () => {
 
 // Loding user data
 
-import { Message, Prisma, PrismaClient } from "@prisma/client";
+import { Message, PrismaClient } from "@prisma/client";
 const prisma: PrismaClient = new PrismaClient();
 
 async function testLogin(user: string, password: string) {
@@ -174,7 +174,8 @@ app.get("/getChat", (req, res) => {
                 users: {
                   select: {
                     id: true,
-                    name: true
+                    name: true,
+                    bio: true
                   }
                 },
                 messages: {
@@ -246,7 +247,7 @@ app.get("/addChat", async (req, res) => {
   let user1 = req.query.user1 as string;
   let user2 = req.query.user2 as string;
   if (req.query.user1 && req.query.user2) {
-    let data = await prisma.chat.create({
+    await prisma.chat.create({
       data: {
         users: {
           connect: [
@@ -379,6 +380,7 @@ app.post("/createGroup", async (req, res) => {
   let group = await prisma.group.create({
     data: {
       name: req.body.groupName,
+      description: req.body.groupDescription,
       users: {
         connect: req.body.users.map((user: string) => {
           return {

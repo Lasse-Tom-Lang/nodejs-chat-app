@@ -218,6 +218,10 @@ main>div:nth-of-type(2) {
   z-index: 100;
 }
 
+#chatInfos:has(img[src=""]) {
+  cursor: default;
+}
+
 #chatInfos img {
   width: 40px;
   aspect-ratio: 1;
@@ -225,9 +229,6 @@ main>div:nth-of-type(2) {
   margin-right: 10px;
   display: inline;
   object-fit: cover;
-}
-
-#chatInfos img:empty {
   display: none;
 }
 
@@ -833,4 +834,9 @@ main>div:nth-of-type(2) {
   color: black;
   font-size: 20px;
   display: none;
+}
+
+#bio {
+  margin: 8px;
+  margin-bottom: 0;
 }

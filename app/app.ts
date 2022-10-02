@@ -4,9 +4,11 @@ interface chatInfo {
   name: string,
   chatID?: string,
   groupID?: string,
+  description?: string
   users: {
     id: string
     name: string
+    bio: string
   }[],
   messages: {
     messageID: string,
@@ -88,9 +90,10 @@ let addGroupDiv = document.getElementById("addGroupDiv") as HTMLDivElement;
 let addChatInput = document.querySelector("#addChatDiv input") as HTMLInputElement;
 let addChatError = document.querySelector("#addChatDiv p") as HTMLParagraphElement;
 let createButton = document.querySelector("#addDiv>button:last-of-type") as HTMLButtonElement;
-let addGroupInput = document.querySelector("#addGroupDiv input:nth-of-type(2)") as HTMLInputElement;
+let addGroupInput = document.querySelector("#addGroupDiv input:nth-of-type(3)") as HTMLInputElement;
 let addGroupName = document.querySelector("#addGroupDiv input:nth-of-type(1)") as HTMLInputElement;
-let addGroupImage = document.querySelector("#addGroupDiv input:nth-of-type(3)") as HTMLInputElement;
+let addGroupDescription = document.querySelector("#addGroupDiv input:nth-of-type(2)") as HTMLInputElement;
+let addGroupImage = document.querySelector("#addGroupDiv input:nth-of-type(4)") as HTMLInputElement;
 let addGroupError = document.querySelector("#addGroupDiv p") as HTMLParagraphElement;
 let choosenUsers = document.getElementById("choosenUsers") as HTMLDivElement;
 let groupImageInput = document.getElementById("groupImageInput") as HTMLInputElement;
@@ -100,6 +103,7 @@ let messageImageButton = document.getElementById("messageImageButton") as HTMLBu
 let messageFileButton = document.getElementById("messageFileButton") as HTMLButtonElement;
 let messageLinkButton = document.getElementById("messageLinkButton") as HTMLButtonElement;
 let btnSend = document.getElementById("btn-send") as HTMLButtonElement;
+let bio = document.getElementById("bio") as HTMLParagraphElement;
 
 function renderMessage(userName: string, type: MessageType, messageID: string, messageFiles: { name: string, id: string }[], link: string, text: string) {
   switch (type) {
@@ -334,12 +338,13 @@ createButton.addEventListener("click", () => {
     fetch(`/addChat?user1=${choosenUserID}&user2=${userInfo.id}`)
     addDiv.style.display = "none";
   }
-  else if (addSelectedType == "group" && choosenUsersIDs && userInfo.id && addGroupName.value.trim().length > 0 && addGroupImage.files!.length == 1) {
+  else if (addSelectedType == "group" && choosenUsersIDs && userInfo.id && addGroupName.value.trim().length > 0 && addGroupDescription.value.trim().length > 0 && addGroupImage.files!.length == 1) {
     let xml = new XMLHttpRequest();
     xml.open('POST', '/createGroup', true);
     let formdata = new FormData();
     formdata.append("myFile", addGroupImage.files![0]);
     formdata.append("groupName", addGroupName.value);
+    formdata.append("groupDescription", addGroupDescription.value);
     formdata.append("users", userInfo.id);
     for (let i = 0; i < choosenUsersIDs.length; i++) {
       formdata.append("users", choosenUsersIDs[i])
@@ -406,17 +411,20 @@ function setChat(chatID, chatLoadType) {
           chatImage.src = `profilePictures?user=${chatInfo.users[1].id}`;
           chatImage.style.display = "inline";
           chatName.innerHTML = chatInfo.users[1].name;
+          bio.innerHTML = chatInfo.users[1].bio;
         }
         else if (chatInfo.users[1].id == userInfo.id) {
           chatImage.src = `profilePictures?user=${chatInfo.users[0].id}`;
           chatImage.style.display = "inline";
           chatName.innerHTML = chatInfo.users[0].name;
+          bio.innerHTML = chatInfo.users[0].bio;
         }
       }
       else if (chatType == "group") {
         chatImage.src = `profilePictures?user=${chatInfo.groupID}`;
         chatImage.style.display = "inline";
         chatName.innerHTML = chatInfo.name;
+        bio.innerHTML = chatInfo.description!;
       }
       messages.innerHTML = "";
       chatInfo.messages.sort((a, b) => {
