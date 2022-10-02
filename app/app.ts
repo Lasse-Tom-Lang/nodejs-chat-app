@@ -264,10 +264,10 @@ addGroupInput.addEventListener("blur", () => {
         if (data.status == 0) {
           addGroupError.innerHTML = "User not found";
         }
-        if (data.status == 1) {
+        if (data.status == 1 && !choosenUsersIDs.includes(data.id)) {
           addGroupError.innerHTML = "";
           let userInfo = `
-            <div id="addChatUser">
+            <div class="addChatUser">
               <img src="profilePictures?user=${data.id}">
               <a>
                 ${data.name}

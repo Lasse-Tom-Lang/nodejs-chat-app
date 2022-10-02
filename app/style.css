@@ -311,7 +311,7 @@ main>div:nth-of-type(2) {
   color: grey;
 }
 
-.ownMessage img {
+:is(.ownMessage, .otherMessage) img {
   width: 30%;
   aspect-ratio: 1;
   object-fit: cover;
@@ -337,24 +337,8 @@ main>div:nth-of-type(2) {
   color: grey;
 }
 
-.otherMessage img {
-  width: 30%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: 15px;
-  margin: 5px;
-}
-
 @media screen and (max-width: 400px) {
-  .ownMessage img {
-    width: 90%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 15px;
-    margin: 5px;
-  }
-
-  .otherMessage img {
+  :is(.ownMessage, .otherMessage) img {
     width: 90%;
     aspect-ratio: 1;
     object-fit: cover;
@@ -681,7 +665,7 @@ main>div:nth-of-type(2) {
   border-radius: 10px;
 }
 
-#addChatDiv {
+#addChatDiv, #addGroupDiv {
   width: 100%;
   display: flex;
   align-items: center;
@@ -689,7 +673,7 @@ main>div:nth-of-type(2) {
   flex-direction: column;
 }
 
-#addChatDiv input {
+:is(#addChatDiv, #addGroupDiv) input {
   width: 90%;
   padding: 8px;
   font-size: 18px;
@@ -700,7 +684,7 @@ main>div:nth-of-type(2) {
   background-color: rgb(230, 230, 230);
 }
 
-#addChatDiv p {
+:is(#addChatDiv, #addGroupDiv) p {
   color: red;
   font-size: 16px;
   margin: 5px;
@@ -712,13 +696,13 @@ main>div:nth-of-type(2) {
   padding: 8px;
   background-color: rgb(230, 230, 230);
   border-radius: 10px;
-  margin-top: 15px;
+  margin-block: 15px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
 }
 
-#addChatUser img {
+:is(#addChatUser, .addChatUser) img {
   width: 100px;
   aspect-ratio: 1;
   object-fit: cover;
@@ -726,13 +710,25 @@ main>div:nth-of-type(2) {
   margin-left: 10px;
 }
 
-#addChatUser a {
+:is(#addChatUser, .addChatUser) a {
   margin-left: 20px;
   font-size: 30px;
 }
 
+.addChatUser {
+  width: 90%;
+  height: 120px;
+  padding: 8px;
+  background-color: rgb(230, 230, 230);
+  border-radius: 10px;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 #addDiv>button:last-of-type {
-  position: absolute;
+  position: sticky;
   bottom: 10px;
   background-color: rgb(180, 180, 180);
   color: black;
@@ -745,38 +741,13 @@ main>div:nth-of-type(2) {
   cursor: pointer;
 }
 
-#addGroupDiv {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-#addGroupDiv input {
-  width: 90%;
-  padding: 8px;
-  font-size: 18px;
-  border-radius: 10px;
-  border: 0;
-  outline: 0;
-  margin-top: 10px;
-  background-color: rgb(230, 230, 230);
-}
-
-#addGroupDiv p {
-  color: red;
-  font-size: 16px;
-  margin: 5px;
-}
-
 #choosenUsers {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 #createUserWindow input {
