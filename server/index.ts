@@ -309,6 +309,8 @@ app.get("/logout", (req, res) => {
 
 app.get("/changeBio", async (req, res) => {
   let bio = req.query.bio as string;
+  bio = bio.replace(/>/g, "&gt;");
+  bio = bio.replace(/</g, "&lt;");
   await prisma.user.update({
     where: {
       name: req.session.user
@@ -389,10 +391,14 @@ app.get("/groupAddUser", async (req, res) => {
 })
 
 app.post("/createGroup", async (req, res) => {
+  let description = req.body.groupDescription.replace(/>/g, "&gt;");
+  description = description.replace(/</g, "&lt;");
+  let name = req.body.groupName.replace(/>/g, "&gt;");
+  name = name.replace(/</g, "&lt;");
   let group = await prisma.group.create({
     data: {
-      name: req.body.groupName,
-      description: req.body.groupDescription,
+      name: name,
+      description: description,
       users: {
         connect: req.body.users.map((user: string) => {
           return {
@@ -415,11 +421,13 @@ app.post("/createGroup", async (req, res) => {
 });
 
 app.post("/createUser", async (req, res) => {
+  let bio = req.body.bio.replace(/>/g, "&gt;");
+  bio = bio.replace(/</g, "&lt;");
   let user = await prisma.user.create({
     data: {
       name: req.body.name,
       password: req.body.password,
-      bio: req.body.bio
+      bio: bio
     }
   }
   );
@@ -560,7 +568,9 @@ io.on("connection", (socket: Socket) => {
   })
 
   socket.on("message", async (message: socketMessage) => {
-    let newMessage: Message
+    message.text = message.text.replace(/>/g, "&gt;");
+    message.text = message.text.replace(/</g, "&lt;");
+    let newMessage: Message;
     if (message.type == "text") {
       if (message.chatType == "chat") {
         newMessage = await prisma.message.create({

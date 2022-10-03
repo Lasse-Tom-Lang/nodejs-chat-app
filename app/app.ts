@@ -557,9 +557,7 @@ textInput.addEventListener("input", () => {
 
 btnSend.addEventListener("click", () => {
   if (textInput.value.trim().length != 0 && chatInfo && messageType == "text") {
-    var text = textInput.value.replace(/</g, "&lt;");
-    text = text.replace(/>/g, "&gt;");
-    text = text.replace(/\n/g, "<br>");
+    var text = textInput.value.replace(/\n/g, "<br>");
     socket.emit("message", { text: text, type: "text", userName: userInfo.name, chatType: chatType, chat: chat });
     textInput.value = "";
     textInput.style.height = "30px";
@@ -573,9 +571,7 @@ btnSend.addEventListener("click", () => {
         imageList.push({ name: messageImageUpload.files![i].name });
       }
     };
-    var text = textInput.value.replace(/</g, "&lt;");
-    text = text.replace(/>/g, "&gt;");
-    text = text.replace(/\n/g, "<br>");
+    var text = textInput.value.replace(/\n/g, "<br>");
     textInput.value = "";
     textInput.style.height = "30px";
     textInput.style.borderTopLeftRadius = "0px";
@@ -586,9 +582,7 @@ btnSend.addEventListener("click", () => {
     socket.emit("message", { text: text, type: "image", messageFiles: imageList, userName: userInfo.name, chat: chat, chatType: chatType });
   }
   else if (messageType == "link" && chatInfo && messageLinkInput.value.trim().length != 0) {
-    var text = textInput.value.replace(/</g, "&lt;");
-    text = text.replace(/>/g, "&gt;");
-    text = text.replace(/\n/g, "<br>");
+    var text = textInput.value.replace(/\n/g, "<br>");
     socket.emit("message", { text: text, type: "link", link: messageLinkInput.value, userName: userInfo.name, chatType: chatType, chat: chat });
     textInput.value = "";
     textInput.style.height = "30px";
@@ -604,9 +598,7 @@ btnSend.addEventListener("click", () => {
     for (i = 0; i < messageFileUpload.files!.length; i++) {
       fileList.push({ name: messageFileUpload.files![i].name });
     };
-    var text = textInput.value.replace(/</g, "&lt;");
-    text = text.replace(/>/g, "&gt;");
-    text = text.replace(/\n/g, "<br>");
+    var text = textInput.value.replace(/\n/g, "<br>");
     textInput.value = "";
     textInput.style.height = "30px";
     textInput.style.borderTopLeftRadius = "0px";
