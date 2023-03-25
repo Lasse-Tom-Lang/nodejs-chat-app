@@ -542,16 +542,16 @@ textInput.addEventListener("input", () => {
       messageLinkInput.style.bottom = "160px";
     }
     else {
-      textInput.style.borderTopLeftRadius = "15px";
-      textInput.style.borderTopRightRadius = "15px";
+      textInput.style.borderTopLeftRadius = "1rem";
+      textInput.style.borderTopRightRadius = "1rem";
     }
   }
   else {
-    textInput.style.height = "30px";
+    textInput.style.height = "2rem";
     textInput.style.borderTopLeftRadius = "0px";
     textInput.style.borderTopRightRadius = "0px";
-    uploadInfo.style.bottom = "40px";
-    messageLinkInput.style.bottom = "40px";
+    uploadInfo.style.bottom = "3rem";
+    messageLinkInput.style.bottom = "3rem";
   }
 });
 
@@ -560,7 +560,7 @@ btnSend.addEventListener("click", () => {
     var text = textInput.value.replace(/\n/g, "<br>");
     socket.emit("message", { text: text, type: "text", userName: userInfo.name, chatType: chatType, chat: chat });
     textInput.value = "";
-    textInput.style.height = "30px";
+    textInput.style.height = "2rem";
     textInput.style.borderTopLeftRadius = "0px";
     textInput.style.borderTopRightRadius = "0px";
   }
@@ -573,10 +573,10 @@ btnSend.addEventListener("click", () => {
     };
     var text = textInput.value.replace(/\n/g, "<br>");
     textInput.value = "";
-    textInput.style.height = "30px";
+    textInput.style.height = "2rem";
     textInput.style.borderTopLeftRadius = "0px";
     textInput.style.borderTopRightRadius = "0px";
-    uploadInfo.style.bottom = "40px";
+    uploadInfo.style.bottom = "3rem";
     uploadInfo.style.display = "none";
     messageType = "text";
     socket.emit("message", { text: text, type: "image", messageFiles: imageList, userName: userInfo.name, chat: chat, chatType: chatType });
@@ -585,12 +585,12 @@ btnSend.addEventListener("click", () => {
     var text = textInput.value.replace(/\n/g, "<br>");
     socket.emit("message", { text: text, type: "link", link: messageLinkInput.value, userName: userInfo.name, chatType: chatType, chat: chat });
     textInput.value = "";
-    textInput.style.height = "30px";
+    textInput.style.height = "2rem";
     textInput.style.borderTopLeftRadius = "0px";
     textInput.style.borderTopRightRadius = "0px";
     messageLinkInput.style.display = "none";
     messageLinkInput.value = "";
-    messageLinkInput.style.bottom = "40px";
+    messageLinkInput.style.bottom = "3rem";
     messageType = "text";
   }
   else if (messageType == "file" && chatInfo) {
@@ -600,10 +600,10 @@ btnSend.addEventListener("click", () => {
     };
     var text = textInput.value.replace(/\n/g, "<br>");
     textInput.value = "";
-    textInput.style.height = "30px";
+    textInput.style.height = "2rem";
     textInput.style.borderTopLeftRadius = "0px";
     textInput.style.borderTopRightRadius = "0px";
-    uploadInfo.style.bottom = "40px";
+    uploadInfo.style.bottom = "3rem";
     uploadInfo.style.display = "none";
     messageType = "text";
     socket.emit("message", { text: text, type: "file", messageFiles: fileList, userName: userInfo.name, chatType: chatType, chat: chat });

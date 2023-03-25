@@ -5,19 +5,17 @@
 }
 
 html {
-  background: linear-gradient(60deg, rgb(44, 44, 255), rgb(44, 157, 255));
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  overflow: hidden;
 }
 
 main {
-  width: calc(100vw - 20px);
-  height: calc(100vh - 20px);
+  height: 100%;
   background-color: rgb(240, 240, 240);
-  border-radius: 20px;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -34,14 +32,14 @@ main>div:nth-of-type(2) {
 
 #chatList {
   width: 300px;
-  height: calc(100% - 50px);
+  height: calc(100% - 3rem);
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
   overflow-y: scroll;
   align-self: flex-start;
-  margin-bottom: 50px;
+  margin-bottom: 3rem;
 }
 
 #chatBack {
@@ -50,7 +48,7 @@ main>div:nth-of-type(2) {
 
 #menuItems {
   position: absolute;
-  height: 40px;
+  height: 3rem;
   width: 300px;
   background-color: white;
   bottom: 0;
@@ -62,7 +60,7 @@ main>div:nth-of-type(2) {
 #menuItems a {
   color: black;
   text-decoration: none;
-  margin: 10px;
+  margin: 1rem;
   cursor: pointer;
 }
 
@@ -111,7 +109,7 @@ main>div:nth-of-type(2) {
 
 .chat {
   width: 100%;
-  height: 50px;
+  height: 3rem;
   overflow: hidden;
   border: 0;
   border-top: 0.5px solid black;
@@ -137,20 +135,18 @@ main>div:nth-of-type(2) {
 
 .chat:last-of-type {
   border-bottom: 0;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
 }
 
 .chat img {
-  height: calc(100% - 10px);
+  height: calc(100% - .5rem);
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 50%;
-  margin-left: 15px;
+  margin-left: 1rem;
 }
 
 .chat a {
-  margin-left: 15px;
+  margin-left: 1rem;
   font-size: 30px;
 }
 
@@ -168,20 +164,20 @@ main>div:nth-of-type(2) {
 .loginInputs {
   border: 0;
   outline: 0;
-  padding: 8px;
-  margin: 5px;
-  border-radius: 8px;
+  padding: .5rem;
+  margin: .5rem;
+  border-radius: .5rem;
   font-size: 18px;
 }
 
 #btn-login {
   border: 0;
   outline: 0;
-  padding: 8px;
-  margin: 5px;
+  padding: .5rem;
+  margin: .5rem;
   background-color: white;
   color: black;
-  border-radius: 8px;
+  border-radius: .5rem;
   font-size: 18px;
   cursor: pointer;
 }
@@ -193,8 +189,8 @@ main>div:nth-of-type(2) {
 #messages {
   background-color: rgb(200, 200, 200);
   width: 100%;
-  height: calc(100% - 90px);
-  padding-top: 50px;
+  height: calc(100% - 8rem);
+  padding-top: 5rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -204,12 +200,12 @@ main>div:nth-of-type(2) {
 
 #chatInfos {
   position: absolute;
-  height: 45px;
-  top: 5px;
-  left: 5px;
-  width: calc(100% - 10px);
+  height: 3rem;
+  top: 1rem;
+  left: 1rem;
+  width: calc(100% - 2rem);
   background-color: white;
-  border-radius: 15px;
+  border-radius: 1rem;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -223,7 +219,7 @@ main>div:nth-of-type(2) {
 }
 
 #chatInfos img {
-  width: 40px;
+  width: 2.5rem;
   aspect-ratio: 1;
   border-radius: 50%;
   margin-right: 10px;
@@ -240,16 +236,16 @@ main>div:nth-of-type(2) {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
+  height: 3rem;
   width: 100%;
   position: relative;
 }
 
 #messageInput {
-  width: calc(100% - 140px);
-  padding: 5px;
-  padding-left: 10px;
-  height: 30px;
+  width: calc(100% - 10rem);
+  padding: .5rem;
+  padding-left: 1rem;
+  height: 2rem;
   border: 0;
   outline: 0;
   font-size: 25px;
@@ -259,14 +255,15 @@ main>div:nth-of-type(2) {
 }
 
 #uploadInfo {
-  width: calc(100% - 138px);
-  height: 20px;
+  width: calc(100% - 10rem + 2px);
+  height: 1rem;
+  padding-block: .5rem;
   background-color: white;
   position: absolute;
   text-align: center;
-  bottom: 40px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  bottom: 3rem;
+  border-top-left-radius: .5rem;
+  border-top-right-radius: .5rem;
   border-bottom: 1px solid black;
   transition: 0.4s all ease-in-out;
   display: none;
@@ -276,8 +273,8 @@ main>div:nth-of-type(2) {
   border: 0;
   border-left: 1px solid black;
   outline: 0;
-  width: 70px;
-  height: 40px;
+  width: 5rem;
+  height: 3rem;
   background-color: white;
   color: black;
   font-size: 25px;
@@ -290,14 +287,14 @@ main>div:nth-of-type(2) {
 
 #error {
   color: red;
-  margin: 10px;
+  margin: 1rem;
 }
 
 .ownMessage {
   background-color: white;
-  padding: 10px;
-  margin: 10px;
-  border-radius: 15px;
+  padding: .5rem;
+  margin: .5rem;
+  border-radius: 1rem;
   border-bottom-right-radius: 0;
   display: flex;
   align-self: flex-end;
@@ -315,15 +312,15 @@ main>div:nth-of-type(2) {
   width: 30%;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: 15px;
-  margin: 5px;
+  border-radius: 1rem;
+  margin: .5rem;
 }
 
 .otherMessage {
   background-color: white;
-  padding: 10px;
-  margin: 10px;
-  border-radius: 15px;
+  padding: .5rem;
+  margin: .5rem;
+  border-radius: 1rem;
   border-bottom-left-radius: 0;
   display: flex;
   align-self: flex-start;
@@ -362,9 +359,9 @@ main>div:nth-of-type(2) {
   left: 0;
   text-decoration: none;
   color: black;
-  padding: 8px;
+  padding: 1rem;
   background-color: white;
-  border-bottom-right-radius: 5px;
+  border-bottom-right-radius: .5rem;
 }
 
 #profileImage {
@@ -391,8 +388,8 @@ main>div:nth-of-type(2) {
   border: 0;
   border-right: 1px solid black;
   outline: 0;
-  width: 70px;
-  height: 40px;
+  width: 5rem;
+  height: 3rem;
   background-color: white;
   color: black;
   font-size: 25px;
@@ -405,15 +402,15 @@ main>div:nth-of-type(2) {
 
 #messageTypeChoose {
   position: absolute;
-  width: 60px;
-  left: 5px;
-  bottom: 50px;
+  width: 4rem;
+  left: .5rem;
+  bottom: 3.5rem;
   display: none;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   background-color: white;
-  border-radius: 10px;
+  border-radius: .5rem;
   overflow: hidden;
 }
 
@@ -438,23 +435,11 @@ main>div:nth-of-type(2) {
   border-bottom: 0;
 }
 
-.ownMessage .messageLink {
-  padding-bottom: 8px;
-  margin-bottom: 8px;
-  width: calc(100% + 20px);
-  transform: translateX(10px);
-  text-align: center;
-  border-bottom: 1px solid black;
-  color: black !important;
-  text-decoration: none;
-  overflow-x: scroll;
-}
-
-.otherMessage .messageLink {
-  padding-bottom: 8px;
-  margin-bottom: 8px;
-  width: calc(100% + 20px);
-  transform: translateX(-10px);
+:is(.ownMessage, .otherMessage) .messageLink {
+  padding-bottom: .5rem;
+  margin-bottom: .5rem;
+  width: calc(100% + 1rem);
+  transform: translateX(.5rem);
   text-align: center;
   border-bottom: 1px solid black;
   color: black !important;
@@ -463,14 +448,14 @@ main>div:nth-of-type(2) {
 }
 
 #messageLinkInput {
-  width: calc(100% - 138px);
-  height: 24px;
+  width: calc(100% - 10rem + 2px);
+  height: 1.5rem;
   background-color: white;
   position: absolute;
   text-align: center;
-  bottom: 40px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  bottom: 3rem;
+  border-top-left-radius: .5rem;
+  border-top-right-radius: .5rem;
   border: 0;
   outline: 0;
   font-size: 16px;
@@ -489,7 +474,7 @@ main>div:nth-of-type(2) {
   overflow-y: scroll;
   overflow-x: hidden;
   background-color: white;
-  border-radius: 15px;
+  border-radius: 1rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -503,7 +488,7 @@ main>div:nth-of-type(2) {
   width: 200px;
   aspect-ratio: 1;
   border-radius: 50%;
-  margin-top: 10px;
+  margin-block: 1rem;
   object-fit: cover;
 }
 
@@ -512,16 +497,16 @@ main>div:nth-of-type(2) {
 }
 
 #groupInfoUsers {
-  width: calc(100% - 14px);
-  border-radius: 10px;
+  width: calc(100% - 2rem);
+  border-radius: .5rem;
   background-color: rgb(240, 240, 240);
-  margin-top: 15px;
+  margin-top: 1rem;
   display: flex;
   flex-direction: column
 }
 
 #groupInfoUsers a {
-  padding: 5px;
+  padding: .5rem;
   font-size: 20px;
   border-bottom: 1px solid black;
 }
@@ -539,12 +524,12 @@ main>div:nth-of-type(2) {
   color: white;
   border: 0;
   outline: 0;
-  width: calc(100% - 14px);
-  margin-top: 10px;
+  width: calc(100% - 2rem);
+  margin-top: 1rem;
   font-size: 25px;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 10px;
+  padding: .5rem;
+  border-radius: .5rem;
 }
 
 .overlayWindow>button:first-of-type {
@@ -553,8 +538,8 @@ main>div:nth-of-type(2) {
   border: 0;
   outline: 0;
   font-size: 20px;
-  padding: 5px;
-  border-bottom-right-radius: 10px;
+  padding: .5rem;
+  border-bottom-right-radius: .5rem;
   cursor: pointer;
   background-color: rgb(240, 240, 240);
   color: black;
@@ -567,16 +552,16 @@ main>div:nth-of-type(2) {
 .fileList {
   display: flex;
   flex-direction: column;
-  width: calc(100% + 20px);
+  width: calc(100% + 1rem);
   border-bottom: 1px solid black;
-  margin-bottom: 5px;
+  margin-bottom: .5rem;
 }
 
 .fileList a {
   color: black;
-  padding: 4px;
+  padding: .5rem;
   text-decoration: none;
-  width: calc(100% - 10px);
+  width: calc(100% - 1rem);
 }
 
 #passwordChangeDiv {
@@ -591,9 +576,9 @@ main>div:nth-of-type(2) {
 #passwordChangeDiv input {
   border: 0;
   outline: 0;
-  padding: 8px;
-  margin: 5px;
-  border-radius: 8px;
+  padding: .5rem;
+  margin: .5rem;
+  border-radius: .5rem;
   font-size: 18px;
   width: 200px;
 }
@@ -601,11 +586,11 @@ main>div:nth-of-type(2) {
 #btn-changePassword {
   border: 0;
   outline: 0;
-  padding: 8px;
-  margin: 5px;
+  padding: .5rem;
+  margin: .5rem;
   background-color: white;
   color: black;
-  border-radius: 8px;
+  border-radius: .5rem;
   font-size: 18px;
   cursor: pointer;
   width: 216px;
@@ -631,9 +616,8 @@ main>div:nth-of-type(2) {
 }
 
 #chooseAddType {
-  padding: 5px;
-  margin-top: 30px;
-  margin-bottom: 10px;
+  padding: .5rem;
+  margin-top: 2rem;
   width: 100%;
 }
 
@@ -654,15 +638,15 @@ main>div:nth-of-type(2) {
 
 #chooseAddType button {
   width: 40%;
-  height: 30px;
+  height: 3rem;
   background-color: white;
   color: black;
   border: 0;
   outline: 0;
   font-size: 20px;
-  margin: 20px 10px;
+  margin: 1rem .5rem;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: .5rem;
 }
 
 #addChatDiv, #addGroupDiv {
@@ -674,29 +658,33 @@ main>div:nth-of-type(2) {
 }
 
 :is(#addChatDiv, #addGroupDiv) input {
-  width: 90%;
-  padding: 8px;
+  width: calc(100% - 3rem);
+  padding: .5rem;
   font-size: 18px;
-  border-radius: 10px;
+  border-radius: .5rem;
   border: 0;
   outline: 0;
-  margin-top: 10px;
+  margin-top: .5rem;
   background-color: rgb(230, 230, 230);
 }
 
 :is(#addChatDiv, #addGroupDiv) p {
   color: red;
   font-size: 16px;
-  margin: 5px;
+  margin: 1rem;
 }
 
-#addChatUser {
-  width: 90%;
+:is(#addChatDiv, #addGroupDiv) p:empty {
+  margin: .5rem;
+}
+
+:is(#addChatUser, .addChatUser) {
+  width: calc(100% - 3rem);
   height: 120px;
-  padding: 8px;
+  padding: .5rem;
   background-color: rgb(230, 230, 230);
-  border-radius: 10px;
-  margin-block: 15px;
+  border-radius: .5rem;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -707,37 +695,25 @@ main>div:nth-of-type(2) {
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 50%;
-  margin-left: 10px;
+  margin-left: .5rem;
 }
 
 :is(#addChatUser, .addChatUser) a {
-  margin-left: 20px;
+  margin-left: 1rem;
   font-size: 30px;
-}
-
-.addChatUser {
-  width: 90%;
-  height: 120px;
-  padding: 8px;
-  background-color: rgb(230, 230, 230);
-  border-radius: 10px;
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
 }
 
 #addDiv>button:last-of-type {
   position: sticky;
-  bottom: 10px;
+  bottom: 1rem;
   background-color: rgb(180, 180, 180);
   color: black;
   border: 0;
   outline: 0;
   font-size: 20px;
-  padding: 4px;
-  width: 90%;
-  border-radius: 10px;
+  padding: .5rem;
+  width: calc(100% - 2rem);
+  border-radius: .5rem;
   cursor: pointer;
 }
 
@@ -780,13 +756,12 @@ main>div:nth-of-type(2) {
 }
 
 #groupAddUser {
-  width: calc(100% - 14px);
-  padding: 8px;
-  font-size: 18px;
-  border-radius: 10px;
+  width: calc(100% - 2rem);
+  padding: .5rem;
+  border-radius: .5rem;
   border: 0;
   outline: 0;
-  margin-top: 10px;
+  margin-top: 1rem;
   background-color: rgb(230, 230, 230);
   color: black;
   cursor: pointer;
@@ -794,13 +769,13 @@ main>div:nth-of-type(2) {
 }
 
 #groupAddUserInput {
-  width: 92%;
-  padding: 8px;
+  width: calc(100% - 3rem);
+  padding: .5rem;
   font-size: 18px;
-  border-radius: 10px;
+  border-radius: .5rem;
   border: 0;
   outline: 0;
-  margin-top: 10px;
+  margin-top: 1rem;
   background-color: rgb(230, 230, 230);
   color: black;
   font-size: 20px;
@@ -808,16 +783,16 @@ main>div:nth-of-type(2) {
 }
 
 #bio {
-  margin: 8px;
+  margin: 1rem;
   margin-bottom: 0;
 }
 
 #userBio {
   border: 0;
   outline: 0;
-  padding: 8px;
-  margin: 5px;
-  border-radius: 8px;
+  padding: .5rem;
+  margin: .5rem;
+  border-radius: .5rem;
   font-size: 18px;
   width: 200px;
   translate: 10px;

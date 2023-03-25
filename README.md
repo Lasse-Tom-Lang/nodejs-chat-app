@@ -1,7 +1,6 @@
 # node.js chat app
 
-
-![Image](./exampleImage.png)
+![Image](./docs/exampleImage.png)
 
 # Setup
 
